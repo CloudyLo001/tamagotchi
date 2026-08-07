@@ -4,10 +4,20 @@ import { PetSim, PetSnapshot, SimEvent, newPetSnapshot } from "./pet";
 const SAVE_KEY = "tama3d.pet.v1";
 const SETTINGS_KEY = "tama3d.settings.v1";
 
-export type ShellId = "lightning" | "dream" | "candy";
+export type ShellId =
+  | "lightning"
+  | "dream"
+  | "candy"
+  | "ocean"
+  | "galaxy"
+  | "bloom"
+  | "arcade";
+
+export type BackdropId = "rainbow" | "ocean" | "galaxy" | "meadow" | "bedroom";
 
 export interface Settings {
   shell: ShellId;
+  backdrop: BackdropId;
   eggColor: "white" | "pink";
   sound: boolean;
   lcd: boolean;
@@ -15,6 +25,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   shell: "lightning",
+  backdrop: "rainbow",
   eggColor: "white",
   sound: true,
   lcd: true,

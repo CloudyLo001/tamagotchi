@@ -25,6 +25,7 @@ import {
 import { assetUrl } from "./assets/registry";
 import { Beeper } from "./game/audio";
 import { Backdrop } from "./game/backdrop";
+import { BACKDROP_THEMES, SHELL_THEMES, backdropTheme } from "./game/themes";
 import { DeviceShell } from "./game/device";
 import { GameController, InputBinder } from "./game/controller";
 import { ScreenHud } from "./game/hud";
@@ -74,18 +75,20 @@ const beeper = new Beeper();
 
 let settings: Settings = loadSettings();
 
-// Reuse the generated backdrop art on the landing page so the title screen and
-// the game view read as one world.
-const backdropUrl = assetUrl("backdrop");
-if (backdropUrl) {
-  const landing = document.getElementById("landing");
-  if (landing) landing.style.backgroundImage = `url("${backdropUrl}")`;
-}
-
 function applySettings() {
   beeper.enabled = settings.sound;
   screenRenderer.setLcdEffect(settings.lcd);
   void device.setShell(settings.shell, screenRenderer.mesh);
+  backdrop.setTheme(settings.backdrop);
+
+  // The title screen wears the same art as the 3D scene, so the two read as
+  // one world. Falls back to the theme's gradient when the image is missing.
+  const theme = backdropTheme(settings.backdrop);
+  const url = assetUrl(theme.key);
+  const landing = document.getElementById("landing");
+  if (landing) {
+    landing.style.backgroundImage = url ? `url("${url}")` : theme.gradient;
+  }
 }
 
 // -------------------------------------------------------------------- state
@@ -139,6 +142,7 @@ const howtoEl = document.getElementById("howto")!;
 const btnHowto = document.getElementById("btn-howto") as HTMLButtonElement;
 const btnCloseHowto = document.getElementById("btn-close-howto") as HTMLButtonElement;
 const btnCloseSettings = document.getElementById("btn-close-settings") as HTMLButtonElement;
+const btnSettingsGame = document.getElementById("btn-settings-game") as HTMLButtonElement;
 const btnReset = document.getElementById("btn-reset") as HTMLButtonElement;
 const btnHome = document.getElementById("btn-home") as HTMLButtonElement;
 
@@ -188,15 +192,60 @@ btnHome.addEventListener("click", () => {
 
 // ----------------------------------------------------------------- settings
 
+const shellPicker = document.getElementById("shell-picker")!;
+const backdropPicker = document.getElementById("backdrop-picker")!;
+
+/** Build a swatch button. Themes whose asset is missing are still selectable —
+ *  they fall back to procedural colours rather than disappearing. */
+function buildSwatch(name: string, style: string, onPick: () => void) {
+  const b = document.createElement("button");
+  b.className = "swatch";
+  b.innerHTML = `<span class="swatch-dot" style="background:${style}"></span><span>${name}</span>`;
+  b.addEventListener("click", () => {
+    onPick();
+    saveSettings(settings);
+    syncSettingsUi();
+    applySettings();
+    beeper.blip();
+  });
+  return b;
+}
+
+for (const t of SHELL_THEMES) {
+  const swatch = buildSwatch(
+    t.name,
+    `linear-gradient(135deg, ${t.swatch[0]} 0 50%, ${t.swatch[1]} 50% 100%)`,
+    () => { settings.shell = t.id; },
+  );
+  swatch.dataset.shell = t.id;
+  shellPicker.appendChild(swatch);
+}
+
+for (const t of BACKDROP_THEMES) {
+  const swatch = buildSwatch(t.name, t.gradient, () => { settings.backdrop = t.id; });
+  swatch.dataset.backdrop = t.id;
+  backdropPicker.appendChild(swatch);
+}
+
 function syncSettingsUi() {
-  document.querySelectorAll<HTMLButtonElement>("#shell-picker [data-shell]").forEach((b) => {
+  shellPicker.querySelectorAll<HTMLButtonElement>("[data-shell]").forEach((b) => {
     b.classList.toggle("selected", b.dataset.shell === settings.shell);
+  });
+  backdropPicker.querySelectorAll<HTMLButtonElement>("[data-backdrop]").forEach((b) => {
+    b.classList.toggle("selected", b.dataset.backdrop === settings.backdrop);
   });
   document.querySelectorAll<HTMLButtonElement>("#egg-picker [data-egg]").forEach((b) => {
     b.classList.toggle("selected", b.dataset.egg === settings.eggColor);
   });
   (document.getElementById("toggle-sound") as HTMLButtonElement).textContent = settings.sound ? "On 🔊" : "Off 🔇";
   (document.getElementById("toggle-lcd") as HTMLButtonElement).textContent = settings.lcd ? "On" : "Off";
+}
+
+function openSettings() {
+  beeper.blip();
+  syncSettingsUi();
+  settingsEl.classList.remove("hidden");
+  settingsEl.querySelector(".panel")!.scrollTop = 0;
 }
 
 btnHowto.addEventListener("click", () => {
@@ -219,25 +268,26 @@ window.addEventListener("keydown", (e) => {
   else if (!settingsEl.classList.contains("hidden")) settingsEl.classList.add("hidden");
 });
 
-btnSettings.addEventListener("click", () => {
-  beeper.blip();
-  syncSettingsUi();
-  settingsEl.classList.remove("hidden");
-});
+// Clicking the dimmed area outside a panel closes it. The listener sits on the
+// overlay and checks the target is the overlay itself, so clicks that bubble up
+// from inside the panel (buttons, scrollbar, text) never dismiss it.
+for (const overlay of [settingsEl, howtoEl]) {
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.target !== overlay) return;
+    overlay.classList.add("hidden");
+    beeper.cancel();
+  });
+}
+
+// Settings are reachable from the title screen and mid-game (gear in the HUD).
+// Changing a look never touches the pet — the simulation keeps running behind
+// the panel, exactly as it would on a real device.
+btnSettings.addEventListener("click", openSettings);
+btnSettingsGame.addEventListener("click", openSettings);
 
 btnCloseSettings.addEventListener("click", () => {
   beeper.confirm();
   settingsEl.classList.add("hidden");
-});
-
-document.querySelectorAll<HTMLButtonElement>("#shell-picker [data-shell]").forEach((b) => {
-  b.addEventListener("click", () => {
-    settings.shell = b.dataset.shell as Settings["shell"];
-    saveSettings(settings);
-    syncSettingsUi();
-    applySettings(); // shell swap never resets the pet
-    beeper.blip();
-  });
 });
 
 document.querySelectorAll<HTMLButtonElement>("#egg-picker [data-egg]").forEach((b) => {
@@ -266,11 +316,17 @@ document.getElementById("toggle-lcd")!.addEventListener("click", () => {
 });
 
 btnReset.addEventListener("click", () => {
-  if (confirm("Reset your pet? This cannot be undone.")) {
-    clearPetSave();
-    controller = null;
-    refreshContinueButton();
-    beeper.cancel();
+  if (!confirm("Reset your pet? This cannot be undone.")) return;
+  clearPetSave();
+  const wasPlaying = controller !== null;
+  controller = null;
+  refreshContinueButton();
+  beeper.cancel();
+  // Resetting mid-game leaves nothing to render, so close settings and return
+  // to the title screen where a new egg can be started.
+  if (wasPlaying) {
+    settingsEl.classList.add("hidden");
+    showLanding();
   }
 });
 

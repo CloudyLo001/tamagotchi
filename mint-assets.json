@@ -43,6 +43,170 @@
         }
       }
     },
+    "backdrop-bedroom": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "image",
+        "assetId": "xn72baxxhb9v0wts30f72zyegh8c0abf"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "image_file": {
+          "artifactId": "image_file",
+          "role": "image",
+          "format": "png",
+          "contentType": "image/png",
+          "filename": "Backdrop-Bedroom.png",
+          "localPath": "public/assets/mint/backdrop-bedroom/image_file.png",
+          "loaderHint": "image",
+          "byteSize": 1318421,
+          "width": 1376,
+          "height": 768,
+          "aspectRatio": 1.7916666666666667
+        }
+      }
+    },
+    "backdrop-galaxy": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "image",
+        "assetId": "xn719wfay9gk2cgnbdkfn8b5t58c15xf"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "image_file": {
+          "artifactId": "image_file",
+          "role": "image",
+          "format": "png",
+          "contentType": "image/png",
+          "filename": "Backdrop-Galaxy.png",
+          "localPath": "public/assets/mint/backdrop-galaxy/image_file.png",
+          "loaderHint": "image",
+          "byteSize": 1257082,
+          "width": 1376,
+          "height": 768,
+          "aspectRatio": 1.7916666666666667
+        }
+      }
+    },
+    "backdrop-meadow": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "image",
+        "assetId": "xn76vg1jkdztf502a9jq2rb3898c0bre"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "image_file": {
+          "artifactId": "image_file",
+          "role": "image",
+          "format": "png",
+          "contentType": "image/png",
+          "filename": "Backdrop-Meadow.png",
+          "localPath": "public/assets/mint/backdrop-meadow/image_file.png",
+          "loaderHint": "image",
+          "byteSize": 1156622,
+          "width": 1376,
+          "height": 768,
+          "aspectRatio": 1.7916666666666667
+        }
+      }
+    },
+    "backdrop-ocean": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "image",
+        "assetId": "xn74f561wj5p6gbm8w24qv1azx8c069g"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "image_file": {
+          "artifactId": "image_file",
+          "role": "image",
+          "format": "png",
+          "contentType": "image/png",
+          "filename": "Backdrop-Ocean.png",
+          "localPath": "public/assets/mint/backdrop-ocean/image_file.png",
+          "loaderHint": "image",
+          "byteSize": 1177972,
+          "width": 1376,
+          "height": 768,
+          "aspectRatio": 1.7916666666666667
+        }
+      }
+    },
     "characters": {
       "source": {
         "manifestVersion": 1,
@@ -520,6 +684,121 @@
         }
       },
       "thumbnailUrl": "public/assets/mint/shells/preview_image-vd7a5wwsv9zgh7hqzmmn4e1fyd8byvp7-0.webp"
+    },
+    "shells2": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "asset_pack",
+        "assetId": "th78cqjc4bthhdhb0930yt95fs8c1nec"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:0:ks71a4nwzr0zkk5vkbpkz4kaad8c0wy0": {
+          "artifactId": "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:0:ks71a4nwzr0zkk5vkbpkz4kaad8c0wy0",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "shell-ocean-ad8c0wy0.glb",
+          "localPath": "public/assets/mint/shells2/asset_pack_item_glb-vd76c0cwqxzqz1a28hng8aeyps8c0c0q-0-ks71a4nwzr0zkk5vkbpkz4kaad8c0wy0.glb",
+          "loaderHint": "gltf",
+          "byteSize": 782104,
+          "extensionsUsed": [],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:1:ks7bm9kh2pc5cfc89hd8sygwmx8c0114": {
+          "artifactId": "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:1:ks7bm9kh2pc5cfc89hd8sygwmx8c0114",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "shell-galaxy-mx8c0114.glb",
+          "localPath": "public/assets/mint/shells2/asset_pack_item_glb-vd76c0cwqxzqz1a28hng8aeyps8c0c0q-1-ks7bm9kh2pc5cfc89hd8sygwmx8c0114.glb",
+          "loaderHint": "gltf",
+          "byteSize": 657752,
+          "extensionsUsed": [],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:2:ks72ay4qbk8va6j5r3ex90rmeh8c1v9j": {
+          "artifactId": "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:2:ks72ay4qbk8va6j5r3ex90rmeh8c1v9j",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "shell-bloom-eh8c1v9j.glb",
+          "localPath": "public/assets/mint/shells2/asset_pack_item_glb-vd76c0cwqxzqz1a28hng8aeyps8c0c0q-2-ks72ay4qbk8va6j5r3ex90rmeh8c1v9j.glb",
+          "loaderHint": "gltf",
+          "byteSize": 798736,
+          "extensionsUsed": [],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:3:ks77sq3v6hy48w5sw5z18pq36s8c1mhb": {
+          "artifactId": "asset_pack_item_glb:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:3:ks77sq3v6hy48w5sw5z18pq36s8c1mhb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "shell-arcade-6s8c1mhb.glb",
+          "localPath": "public/assets/mint/shells2/asset_pack_item_glb-vd76c0cwqxzqz1a28hng8aeyps8c0c0q-3-ks77sq3v6hy48w5sw5z18pq36s8c1mhb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 828860,
+          "extensionsUsed": [],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:0": {
+          "artifactId": "preview_image:vd76c0cwqxzqz1a28hng8aeyps8c0c0q:0",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "shell-ocean-fs8c1nec-preview.webp",
+          "localPath": "public/assets/mint/shells2/preview_image-vd76c0cwqxzqz1a28hng8aeyps8c0c0q-0.webp",
+          "loaderHint": "image",
+          "byteSize": 54204
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/shells2/preview_image-vd76c0cwqxzqz1a28hng8aeyps8c0c0q-0.webp"
     }
   }
 }

@@ -196,7 +196,7 @@ export class ScreenHud {
       this.text(`${def.name} · age ${s.ageDays}`, SIZE / 2, SIZE * 0.31, 22);
       this.ctx.fillStyle = "rgba(246, 242, 226, 0.85)";
       this.ctx.fillRect(0, SIZE * 0.765, SIZE, SIZE * 0.07);
-      this.text("B: new egg", SIZE / 2, SIZE * 0.8, 20);
+      this.text("S: new egg", SIZE / 2, SIZE * 0.8, 20);
     }
   }
 
@@ -249,7 +249,7 @@ export class ScreenHud {
       this.ctx.fillRect(x + 4 * U, y + 4 * U, (w - 8 * U) * (s.discipline / 100), h - 8 * U);
       this.text(`${s.discipline}%`, SIZE / 2, y + h + 34 * U, 24);
     }
-    this.text(`${page + 1}/4  A:next C:exit`, SIZE / 2, SIZE * 0.7, 18);
+    this.text(`${page + 1}/4  A:next D:exit`, SIZE / 2, SIZE * 0.7, 18);
   }
 
   private drawGame(mode: { round: number; wins: number; prompt: boolean; lastWin: boolean | null }) {
@@ -264,7 +264,7 @@ export class ScreenHud {
     if (mode.prompt) {
       const bounce = Math.sin(performance.now() / 220) * 5 * U;
       this.text("◀ A", SIZE * 0.19, SIZE * 0.5 + bounce, 34);
-      this.text("B ▶", SIZE * 0.81, SIZE * 0.5 - bounce, 34);
+      this.text("S ▶", SIZE * 0.81, SIZE * 0.5 - bounce, 34);
       strip(SIZE * 0.735, SIZE * 0.09);
       this.text("Which way will it turn?", SIZE / 2, SIZE * 0.78, 19);
     } else if (mode.lastWin !== null) {

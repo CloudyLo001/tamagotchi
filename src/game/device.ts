@@ -13,21 +13,9 @@ import {
 } from "three";
 import { loadModel, normalizeModel, packItemGlbUrl } from "../assets/registry";
 import type { ShellId } from "../sim/save";
+import { ShellTheme, shellTheme } from "./themes";
 
-const SHELL_PACK_KEY = "shells";
-
-interface ShellStyle {
-  itemLabel: string;
-  bodyColor: number; // fallback shell body
-  bezelColor: number;
-  buttonColor: number;
-}
-
-const SHELL_STYLES: Record<ShellId, ShellStyle> = {
-  lightning: { itemLabel: "shell-lightning", bodyColor: 0x9adcff, bezelColor: 0xd8399b, buttonColor: 0xffd23b },
-  dream: { itemLabel: "shell-dream", bodyColor: 0xffc7de, bezelColor: 0x9b6fd4, buttonColor: 0xcdb8f2 },
-  candy: { itemLabel: "shell-candy", bodyColor: 0xfff6ee, bezelColor: 0xffd23b, buttonColor: 0xffd23b },
-};
+type ShellStyle = ShellTheme;
 
 // Layout in normalized device space (device height = 1, centered at origin,
 // front toward +Z). Calibrated against the generated shell renders.
@@ -68,14 +56,14 @@ export class DeviceShell {
   }
 
   async setShell(id: ShellId, screen: Mesh) {
-    const style = SHELL_STYLES[id];
+    const style = shellTheme(id);
     const token = ++this.loadToken;
     this.screenMesh = screen;
 
     // Start from the procedural fallback immediately.
     this.installShell(this.buildFallbackShell(style), style, true);
 
-    const url = packItemGlbUrl(SHELL_PACK_KEY, style.itemLabel);
+    const url = packItemGlbUrl(style.packKey, style.itemLabel);
     if (url) {
       const model = await loadModel(url);
       if (model && token === this.loadToken) {
@@ -228,7 +216,7 @@ export class DeviceShell {
     }
   }
 
-  /** Visibly depress/release a button (0=A,1=B,2=C). */
+  /** Visibly depress/release a button (0=A, 1=S, 2=D, left to right). */
   setButtonPressed(index: number, pressed: boolean) {
     const b = this.buttons[index];
     if (!b) return;

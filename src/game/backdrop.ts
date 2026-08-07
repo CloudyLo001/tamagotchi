@@ -6,9 +6,12 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   SRGBColorSpace,
+  Texture,
   TextureLoader,
 } from "three";
 import { assetUrl } from "../assets/registry";
+import type { BackdropId } from "../sim/save";
+import { backdropTheme } from "./themes";
 
 const BACKDROP_Z = -3;
 const HALO_Z = -0.9;
@@ -37,8 +40,13 @@ function makeHaloTexture() {
 export class Backdrop {
   readonly mesh: Mesh;
   readonly halo: Mesh;
+  private material: MeshBasicMaterial;
   private imageAspect = 1.79; // updated once the texture loads
   private loaded = false;
+  private currentId: BackdropId | null = null;
+  private loadToken = 0;
+  private textures = new Map<string, Texture>();
+  private camera: PerspectiveCamera | null = null;
 
   constructor() {
     this.halo = new Mesh(
@@ -54,35 +62,73 @@ export class Backdrop {
     this.halo.position.set(0, -0.04, HALO_Z);
     this.halo.renderOrder = 0;
 
-    const material = new MeshBasicMaterial({
+    this.material = new MeshBasicMaterial({
       color: 0xe8dcff, // calm fallback tint until (or unless) the image loads
       depthWrite: false,
       toneMapped: false,
     });
-    this.mesh = new Mesh(new PlaneGeometry(1, 1), material);
+    this.mesh = new Mesh(new PlaneGeometry(1, 1), this.material);
     this.mesh.position.z = BACKDROP_Z;
     this.mesh.renderOrder = -1;
+  }
 
-    const url = assetUrl("backdrop");
-    if (url) {
-      new TextureLoader().load(
-        url,
-        (texture) => {
-          texture.colorSpace = SRGBColorSpace;
-          this.imageAspect = texture.image.width / texture.image.height;
-          material.map = texture;
-          material.color.set(0xffffff);
-          material.needsUpdate = true;
-          this.loaded = true;
-        },
-        undefined,
-        (err) => console.warn("[backdrop] failed to load:", err),
-      );
+  /**
+   * Swap to a themed backdrop. Textures are cached, so flipping between themes
+   * in settings only pays the download once. Falls back to the theme's flat
+   * colour when its image has not been synced.
+   */
+  setTheme(id: BackdropId) {
+    if (this.currentId === id) return;
+    this.currentId = id;
+    const theme = backdropTheme(id);
+    const token = ++this.loadToken;
+
+    const apply = (texture: Texture | null) => {
+      if (token !== this.loadToken) return; // a newer selection won
+      if (texture) {
+        const img = texture.image as { width: number; height: number };
+        this.imageAspect = img.width / img.height;
+        this.material.map = texture;
+        this.material.color.set(0xffffff);
+        this.loaded = true;
+      } else {
+        this.material.map = null;
+        this.material.color.set(theme.fallback);
+        this.loaded = false;
+      }
+      this.material.needsUpdate = true;
+      if (this.camera) this.resize(this.camera);
+    };
+
+    const cached = this.textures.get(theme.key);
+    if (cached) {
+      apply(cached);
+      return;
     }
+
+    const url = assetUrl(theme.key);
+    if (!url) {
+      apply(null);
+      return;
+    }
+    new TextureLoader().load(
+      url,
+      (texture) => {
+        texture.colorSpace = SRGBColorSpace;
+        this.textures.set(theme.key, texture);
+        apply(texture);
+      },
+      undefined,
+      (err) => {
+        console.warn(`[backdrop] failed to load "${theme.key}":`, err);
+        apply(null);
+      },
+    );
   }
 
   /** Size the plane to cover the camera frustum at its depth (CSS "cover"). */
   resize(camera: PerspectiveCamera) {
+    this.camera = camera;
     const distance = camera.position.z - BACKDROP_Z;
     const frustumH = 2 * distance * Math.tan((camera.fov * Math.PI) / 360);
     const frustumW = frustumH * camera.aspect;

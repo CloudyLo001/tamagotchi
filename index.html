@@ -46,13 +46,14 @@
             <h3>Controls</h3>
             <ul class="howto-controls">
               <li><span class="key">A</span> Move the highlight to the next icon</li>
-              <li><span class="key">B</span> Confirm — use the selected icon</li>
-              <li><span class="key">C</span> Cancel / back out of a screen</li>
+              <li><span class="key">S</span> Confirm — use the selected icon</li>
+              <li><span class="key">D</span> Cancel / back out of a screen</li>
             </ul>
             <p class="howto-tip">
-              Click the three buttons on the device, press <strong>A</strong>,
-              <strong>S</strong>, <strong>D</strong> on your keyboard, or just
-              click an icon on the screen directly. Drag the device to tilt it.
+              The three buttons on the device are <strong>A</strong>,
+              <strong>S</strong> and <strong>D</strong>, left to right — the
+              same keys on your keyboard. You can also click an icon on the
+              screen directly, or drag the device to tilt it.
             </p>
           </section>
 
@@ -151,11 +152,13 @@
           <h2>Settings</h2>
           <div class="setting-row">
             <span class="setting-label">Shell design</span>
-            <div class="shell-picker" id="shell-picker">
-              <button data-shell="lightning" class="shell-chip shell-lightning">⚡ Lightning</button>
-              <button data-shell="dream" class="shell-chip shell-dream">🌈 Dream</button>
-              <button data-shell="candy" class="shell-chip shell-candy">🍬 Candy</button>
-            </div>
+            <!-- Built from SHELL_THEMES at runtime. -->
+            <div class="swatch-picker" id="shell-picker"></div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Scene</span>
+            <!-- Built from BACKDROP_THEMES at runtime. -->
+            <div class="swatch-picker" id="backdrop-picker"></div>
           </div>
           <div class="setting-row">
             <span class="setting-label">Egg color</span>
@@ -182,7 +185,8 @@
 
       <div id="hud" class="hidden">
         <button id="btn-home" title="Back to title">⌂</button>
-        <span id="hud-hint">A select · B confirm · C cancel</span>
+        <button id="btn-settings-game" title="Settings">⚙</button>
+        <span id="hud-hint">A select · S confirm · D cancel</span>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>

@@ -224,6 +224,48 @@ button.chunky.alt {
   color: #fff;
 }
 
+/* ------------------------------------------------------- theme swatches --- */
+
+.swatch-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 0.45rem;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid rgba(58, 42, 74, 0.35);
+  border-radius: 12px;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.swatch:hover {
+  transform: translateY(-1px);
+  border-color: var(--ink);
+}
+
+.swatch.selected {
+  border-color: var(--magenta);
+  box-shadow: 0 0 0 2px var(--sun);
+}
+
+.swatch-dot {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border: 2px solid rgba(58, 42, 74, 0.5);
+}
+
 .shell-lightning { background: linear-gradient(135deg, #bfeaff, #fff3a6); }
 .shell-dream { background: linear-gradient(135deg, #ffd9ec, #e2d4ff); }
 .shell-candy {

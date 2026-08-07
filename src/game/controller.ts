@@ -19,7 +19,7 @@ type Mode =
   | { kind: "message"; lines: string[]; t: number; duration: number };
 
 /**
- * Orchestrates sim <-> presentation: icon menu, A/B/C buttons, screen modes,
+ * Orchestrates sim <-> presentation: icon menu, A/S/D buttons, screen modes,
  * sounds, and periodic saving.
  */
 export class GameController {
@@ -43,7 +43,7 @@ export class GameController {
 
   // ------------------------------------------------------------------ input
 
-  /** index 0=A 1=B 2=C */
+  /** Button index left-to-right: 0=A (select) 1=S (confirm) 2=D (cancel). */
   pressButton(index: number) {
     this.device.setButtonPressed(index, true);
     if (index === 0) this.buttonA();
