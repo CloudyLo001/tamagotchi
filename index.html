@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tama 3D — Virtual Pet</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+
+      <div id="landing" class="overlay">
+        <div class="landing-inner">
+          <div class="starburst sb1">✦</div>
+          <div class="starburst sb2">✧</div>
+          <div class="starburst sb3">✦</div>
+          <h1 class="logo"><span>Tama</span><span class="logo-3d">3D</span></h1>
+          <p class="tagline">a tiny friend lives in this egg</p>
+          <div class="menu">
+            <button id="btn-start" class="chunky">Press Start</button>
+            <button id="btn-continue" class="chunky hidden">Continue</button>
+            <button id="btn-howto" class="chunky alt">How to Play</button>
+            <button id="btn-settings" class="chunky alt">Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="howto" class="overlay hidden">
+        <div class="panel howto-panel">
+          <h2>How to Play</h2>
+
+          <section class="howto-section">
+            <h3>Your pet is alive</h3>
+            <p>
+              An egg hatches into a baby. How well you look after it decides who
+              it grows into — there are <strong>six different adults</strong> plus
+              a secret one. Neglect it and it will get sick, and eventually die.
+            </p>
+            <p class="howto-time">
+              ⏱ <strong>1 real minute = 1 hour</strong> in your pet's world.
+              A full day passes in 24 real minutes and ages your pet one year.
+            </p>
+          </section>
+
+          <section class="howto-section">
+            <h3>Controls</h3>
+            <ul class="howto-controls">
+              <li><span class="key">A</span> Move the highlight to the next icon</li>
+              <li><span class="key">B</span> Confirm — use the selected icon</li>
+              <li><span class="key">C</span> Cancel / back out of a screen</li>
+            </ul>
+            <p class="howto-tip">
+              Click the three buttons on the device, press <strong>A</strong>,
+              <strong>S</strong>, <strong>D</strong> on your keyboard, or just
+              click an icon on the screen directly. Drag the device to tilt it.
+            </p>
+          </section>
+
+          <section class="howto-section">
+            <h3>The eight icons</h3>
+            <dl class="howto-icons">
+              <dt>🍚</dt>
+              <dd>
+                <strong>Feed</strong> — a <em>meal</em> fills one hunger heart
+                and adds 1 lb. A <em>snack</em> fills one happy heart but adds
+                2 lb, and too many snacks make your pet sick.
+              </dd>
+              <dt>💡</dt>
+              <dd>
+                <strong>Light</strong> — your pet sleeps from 9 PM to 9 AM. When
+                it goes to bed, turn the light off. Leaving it on is a mistake.
+              </dd>
+              <dt>🎮</dt>
+              <dd>
+                <strong>Game</strong> — play "left or right". Win 3 of 5 rounds
+                for a happy heart, and lose a pound of weight.
+              </dd>
+              <dt>💊</dt>
+              <dd>
+                <strong>Medicine</strong> — cures sickness. Sometimes it takes
+                two doses.
+              </dd>
+              <dt>🚽</dt>
+              <dd>
+                <strong>Toilet</strong> — flush away poop. Let four pile up and
+                your pet falls ill.
+              </dd>
+              <dt>📊</dt>
+              <dd>
+                <strong>Meter</strong> — check hunger, happiness, age, weight
+                and training. Press A to page through.
+              </dd>
+              <dt>📢</dt>
+              <dd>
+                <strong>Scold</strong> — the right answer when your pet cries
+                for no reason. Fills the training meter by 25%.
+              </dd>
+              <dt>❗</dt>
+              <dd>
+                <strong>Attention</strong> — not a button. It lights up and
+                beeps when your pet needs you.
+              </dd>
+            </dl>
+          </section>
+
+          <section class="howto-section">
+            <h3>Answering the call</h3>
+            <p>
+              When <strong>❗</strong> lights up, check what your pet wants. Empty
+              hunger or happy hearts mean feed it or play with it. If both meters
+              are fine and it is still crying, it wants <em>nothing</em> — that is
+              a tantrum, and the correct answer is <strong>📢 Scold</strong>.
+              Feeding a tantrum instead counts against you.
+            </p>
+            <p class="howto-warn">
+              Ignore a call for about 15 pet-minutes and it becomes a
+              <strong>care mistake</strong>. Mistakes decide who your pet becomes.
+            </p>
+          </section>
+
+          <section class="howto-section">
+            <h3>Growing up</h3>
+            <p>
+              Egg → baby → child → teenager → adult. Careful feeding, quick
+              answers and a full training meter lead to the brightest adults.
+              Sloppy care leads somewhere else entirely — every ending is a real
+              character worth meeting.
+            </p>
+            <p class="howto-tip">
+              Sickness left untreated, or a pet ignored for too long, will die —
+              and adults die of old age eventually no matter what. When that
+              happens you get a fresh egg and a new try.
+            </p>
+          </section>
+
+          <section class="howto-section">
+            <h3>Closing the tab</h3>
+            <p>
+              Your pet keeps living while you are away. Come back later and it
+              may have eaten through its hearts, made a mess, or grown up without
+              you. Everything is saved automatically.
+            </p>
+          </section>
+
+          <button id="btn-close-howto" class="chunky">Got it!</button>
+        </div>
+      </div>
+
+      <div id="settings" class="overlay hidden">
+        <div class="panel">
+          <h2>Settings</h2>
+          <div class="setting-row">
+            <span class="setting-label">Shell design</span>
+            <div class="shell-picker" id="shell-picker">
+              <button data-shell="lightning" class="shell-chip shell-lightning">⚡ Lightning</button>
+              <button data-shell="dream" class="shell-chip shell-dream">🌈 Dream</button>
+              <button data-shell="candy" class="shell-chip shell-candy">🍬 Candy</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Egg color</span>
+            <div class="shell-picker" id="egg-picker">
+              <button data-egg="white" class="shell-chip">◯ White-spotted</button>
+              <button data-egg="pink" class="shell-chip">◉ Pink-spotted</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Sound</span>
+            <button id="toggle-sound" class="shell-chip">On</button>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">LCD effect</span>
+            <button id="toggle-lcd" class="shell-chip">On</button>
+          </div>
+          <div class="setting-row danger-row">
+            <span class="setting-label">Reset pet</span>
+            <button id="btn-reset" class="shell-chip danger">Reset…</button>
+          </div>
+          <button id="btn-close-settings" class="chunky">Done</button>
+        </div>
+      </div>
+
+      <div id="hud" class="hidden">
+        <button id="btn-home" title="Back to title">⌂</button>
+        <span id="hud-hint">A select · B confirm · C cancel</span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
