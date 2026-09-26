@@ -13,11 +13,22 @@ export type ShellId =
   | "bloom"
   | "arcade";
 
-export type BackdropId = "rainbow" | "ocean" | "galaxy" | "meadow" | "bedroom";
+export type BackdropId = "rainbow" | "ocean" | "galaxy" | "meadow" | "bedroom" | "white" | "black";
+
+export type OutfitId =
+  | "none"
+  | "party-hat"
+  | "crown"
+  | "wizard-hat"
+  | "flower-crown"
+  | "round-glasses"
+  | "bow-tie";
 
 export interface Settings {
   shell: ShellId;
   backdrop: BackdropId;
+  /** Cosmetic, like the shell: survives new eggs. */
+  outfit: OutfitId;
   eggColor: "white" | "pink";
   sound: boolean;
   lcd: boolean;
@@ -26,6 +37,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   shell: "lightning",
   backdrop: "rainbow",
+  outfit: "none",
   eggColor: "white",
   sound: true,
   lcd: true,

@@ -28,21 +28,30 @@ export interface CharacterDef {
   fallbackShape: "sphere" | "bean" | "tall" | "snake";
   /** Model display height inside the screen scene, world units. */
   height: number;
+  /**
+   * Outfit anchors, as fractions of `height` measured from the feet. Defaults
+   * suit round blobs; override for unusual faces (long, small, off-centre).
+   */
+  eyeY?: number;
+  neckY?: number;
+  /** How far below the crown to measure head width (default 0.14). Small
+   *  heads on thin necks need a shallower cut or the neck gets measured. */
+  headDrop?: number;
 }
 
 export const CHARACTERS: Record<CharacterId, CharacterDef> = {
   egg:           { id: "egg",           name: "Egg",           stage: "egg",   assetKey: "egg",          fallbackColor: 0xffffff, fallbackShape: "sphere", height: 1.0 },
-  babytchi:      { id: "babytchi",      name: "Babytchi",      stage: "baby",  assetKey: "baby",         fallbackColor: 0x333340, fallbackShape: "sphere", height: 0.55 },
-  marutchi:      { id: "marutchi",      name: "Marutchi",      stage: "child", assetKey: "child",        fallbackColor: 0xf5f2ea, fallbackShape: "sphere", height: 0.8 },
+  babytchi:      { id: "babytchi",      name: "Babytchi",      stage: "baby",  assetKey: "baby",         fallbackColor: 0x333340, fallbackShape: "sphere", height: 0.55, eyeY: 0.5, neckY: 0.2 },
+  marutchi:      { id: "marutchi",      name: "Marutchi",      stage: "child", assetKey: "child",        fallbackColor: 0xf5f2ea, fallbackShape: "sphere", height: 0.8, eyeY: 0.42, neckY: 0.2, headDrop: 0.32 },
   tamatchi:      { id: "tamatchi",      name: "Tamatchi",      stage: "teen",  assetKey: "teen-good",    fallbackColor: 0xfff3d6, fallbackShape: "bean",   height: 1.0 },
-  kuchitamatchi: { id: "kuchitamatchi", name: "Kuchitamatchi", stage: "teen",  assetKey: "teen-bad",     fallbackColor: 0xf7d648, fallbackShape: "bean",   height: 1.0 },
+  kuchitamatchi: { id: "kuchitamatchi", name: "Kuchitamatchi", stage: "teen",  assetKey: "teen-bad",     fallbackColor: 0xf7d648, fallbackShape: "bean",   height: 1.0, eyeY: 0.7 },
   mametchi:      { id: "mametchi",      name: "Mametchi",      stage: "adult", assetKey: "adult-mame",   fallbackColor: 0xffd23b, fallbackShape: "sphere", height: 1.15 },
-  ginjirotchi:   { id: "ginjirotchi",   name: "Ginjirotchi",   stage: "adult", assetKey: "adult-ginji",  fallbackColor: 0x4fc8b0, fallbackShape: "bean",   height: 1.15 },
-  maskutchi:     { id: "maskutchi",     name: "Maskutchi",     stage: "adult", assetKey: "adult-masku",  fallbackColor: 0xb69ae0, fallbackShape: "sphere", height: 1.1 },
-  kuchipatchi:   { id: "kuchipatchi",   name: "Kuchipatchi",   stage: "adult", assetKey: "adult-kuchipa", fallbackColor: 0x9bd76a, fallbackShape: "bean",  height: 1.15 },
+  ginjirotchi:   { id: "ginjirotchi",   name: "Ginjirotchi",   stage: "adult", assetKey: "adult-ginji",  fallbackColor: 0x4fc8b0, fallbackShape: "bean",   height: 1.15, eyeY: 0.72 },
+  maskutchi:     { id: "maskutchi",     name: "Maskutchi",     stage: "adult", assetKey: "adult-masku",  fallbackColor: 0xb69ae0, fallbackShape: "sphere", height: 1.1, eyeY: 0.7 },
+  kuchipatchi:   { id: "kuchipatchi",   name: "Kuchipatchi",   stage: "adult", assetKey: "adult-kuchipa", fallbackColor: 0x9bd76a, fallbackShape: "bean",  height: 1.15, eyeY: 0.74 },
   // Tall characters are capped so they stay inside the LCD framing.
-  nyorotchi:     { id: "nyorotchi",     name: "Nyorotchi",     stage: "adult", assetKey: "adult-nyoro",  fallbackColor: 0xf09a3e, fallbackShape: "snake",  height: 1.1 },
-  tarakotchi:    { id: "tarakotchi",    name: "Tarakotchi",    stage: "adult", assetKey: "adult-tarako", fallbackColor: 0xf2c4c4, fallbackShape: "tall",   height: 1.15 },
+  nyorotchi:     { id: "nyorotchi",     name: "Nyorotchi",     stage: "adult", assetKey: "adult-nyoro",  fallbackColor: 0xf09a3e, fallbackShape: "snake",  height: 1.1, eyeY: 0.87, neckY: 0.78, headDrop: 0.05 },
+  tarakotchi:    { id: "tarakotchi",    name: "Tarakotchi",    stage: "adult", assetKey: "adult-tarako", fallbackColor: 0xf2c4c4, fallbackShape: "tall",   height: 1.15, neckY: 0.2 },
   oyajitchi:     { id: "oyajitchi",     name: "Oyajitchi",     stage: "adult", assetKey: "adult-secret", fallbackColor: 0xf5c39a, fallbackShape: "sphere", height: 0.95 },
 };
 

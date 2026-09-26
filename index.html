@@ -19,6 +19,7 @@
           <div class="menu">
             <button id="btn-start" class="chunky">Press Start</button>
             <button id="btn-continue" class="chunky hidden">Continue</button>
+            <button id="btn-charm" class="chunky charm">Muse Charm</button>
             <button id="btn-howto" class="chunky alt">How to Play</button>
             <button id="btn-settings" class="chunky alt">Settings</button>
           </div>
@@ -54,6 +55,34 @@
               <strong>S</strong> and <strong>D</strong>, left to right — the
               same keys on your keyboard. You can also click an icon on the
               screen directly, or drag the device to tilt it.
+              <strong>Settings → Buttons</strong> shows what each one does on
+              every screen.
+            </p>
+            <p class="howto-tip">
+              Tap your pet on the screen to say hi. Open the 👕
+              <strong>wardrobe</strong> to dress it up — it shows off every
+              look before you choose.
+            </p>
+          </section>
+
+          <section class="howto-section">
+            <h3>Muse Charm</h3>
+            <p>
+              A little toy with no hearts to fill. Pick <strong>Muse Charm</strong>
+              on the title screen and play with the mascot on its screen:
+            </p>
+            <ul class="howto-controls">
+              <li><span class="key">Tap</span> It waves hello; double-tap for a big heart</li>
+              <li><span class="key">Hold</span> Press and hold on it and it shrugs</li>
+              <li><span class="key">Flick</span> A quick swipe anywhere on the screen: a soft one makes it hold its head, a hard one knocks it over (it gets up and cheers). Three hard flicks in a row and it plays dead</li>
+              <li><span class="key">Rub</span> Scrub back and forth over it for jumping jacks, and it sends you a heart when you stop</li>
+              <li><span class="key">Circle</span> Hold it and draw circles: slow circles make it walk, fast ones make it run, sometimes round in a loop and sometimes on the spot</li>
+            </ul>
+            <p class="howto-tip">
+              It always finishes what it's doing before it reacts again. Leave
+              it alone for a while and it waves to get your attention. The
+              full list is in ⚙ Settings while the Charm is out.
+              Drag outside the screen to tilt the charm, and press ⌂ to go back.
             </p>
           </section>
 
@@ -150,7 +179,84 @@
       <div id="settings" class="overlay hidden">
         <div class="panel">
           <h2>Settings</h2>
-          <div class="setting-row">
+          <!-- Muse Charm only: what makes the mascot move. Organised by
+               animation, since one gesture can lead to different moves and
+               one move can come from several gestures. -->
+          <div class="setting-row charm-only">
+            <span class="setting-label">Muse gestures</span>
+            <p class="guide-note">
+              Play with the mascot on the Charm's screen. It always finishes
+              one move before it reacts to the next gesture.
+            </p>
+            <ul class="move-guide">
+              <li>
+                <span class="move-icon">👋</span>
+                <span class="move-name">Waves hello</span>
+                <span class="move-how"><span class="gesture">Tap it</span><span class="gesture">Leave it alone for 20 s</span></span>
+              </li>
+              <li>
+                <span class="move-icon">❤️</span>
+                <span class="move-name">Big heart</span>
+                <span class="move-how"><span class="gesture">Double-tap it</span><span class="gesture">Stop rubbing it</span></span>
+              </li>
+              <li>
+                <span class="move-icon">🤕</span>
+                <span class="move-name">Holds its head, ouch</span>
+                <span class="move-how"><span class="gesture">Soft flick</span></span>
+              </li>
+              <li>
+                <span class="move-icon">🤷</span>
+                <span class="move-name">Shrugs</span>
+                <span class="move-how"><span class="gesture">Press and hold on it</span><span class="gesture">Leave it alone for a while</span></span>
+              </li>
+              <li>
+                <span class="move-icon">🏃</span>
+                <span class="move-name">Walks or runs</span>
+                <span class="move-how"><span class="gesture">Hold it and draw circles</span></span>
+                <span class="move-then">Slow circles walk, fast circles run. It mixes it up: sometimes round in a loop the same way as your finger, sometimes on the spot once it's back home. Stop and it heads back to the middle.</span>
+              </li>
+              <li>
+                <span class="move-icon">🤸</span>
+                <span class="move-name">Jumping jacks</span>
+                <span class="move-how"><span class="gesture">Rub it</span></span>
+                <span class="move-then">Then a big heart ❤️ when you stop.</span>
+              </li>
+              <li>
+                <span class="move-icon">💥</span>
+                <span class="move-name">Gets knocked down</span>
+                <span class="move-how"><span class="gesture">Hard flick</span></span>
+                <span class="move-then">Then it gets back up, does a victory fist pump 💪 and runs back to the middle.</span>
+              </li>
+              <li>
+                <span class="move-icon">😵</span>
+                <span class="move-name">Plays dead</span>
+                <span class="move-how"><span class="gesture">3 hard flicks in a row</span></span>
+                <span class="move-then">Then it gets back up, does a victory fist pump 💪 and runs back to the middle.</span>
+              </li>
+            </ul>
+            <dl class="gesture-defs">
+              <dt>Tap</dt>
+              <dd>Press and let go quickly on the mascot. Two quick taps
+                make a double-tap.</dd>
+              <dt>Hold</dt>
+              <dd>Press on the mascot and keep still for a moment.</dd>
+              <dt>Flick</dt>
+              <dd>Swipe anywhere on the screen and let go while still moving.
+                The faster the swipe, the harder the flick; a hard one knocks
+                it over the way you flicked.</dd>
+              <dt>Rub</dt>
+              <dd>Hold on the mascot and scrub side to side a few times.
+                It keeps going until you stop.</dd>
+              <dt>Circle</dt>
+              <dd>Press on the mascot and keep drawing round loops. How fast
+                you go sets how fast it moves.</dd>
+            </dl>
+            <p class="guide-note">
+              A slow drag does nothing, and dragging outside the screen tilts
+              the Charm.
+            </p>
+          </div>
+          <div class="setting-row tama-only">
             <span class="setting-label">Shell design</span>
             <!-- Built from SHELL_THEMES at runtime. -->
             <div class="swatch-picker" id="shell-picker"></div>
@@ -160,7 +266,7 @@
             <!-- Built from BACKDROP_THEMES at runtime. -->
             <div class="swatch-picker" id="backdrop-picker"></div>
           </div>
-          <div class="setting-row">
+          <div class="setting-row tama-only">
             <span class="setting-label">Egg color</span>
             <div class="shell-picker" id="egg-picker">
               <button data-egg="white" class="shell-chip">◯ White-spotted</button>
@@ -171,11 +277,41 @@
             <span class="setting-label">Sound</span>
             <button id="toggle-sound" class="shell-chip">On</button>
           </div>
-          <div class="setting-row">
+          <div class="setting-row tama-only">
             <span class="setting-label">LCD effect</span>
             <button id="toggle-lcd" class="shell-chip">On</button>
           </div>
-          <div class="setting-row danger-row">
+          <div class="setting-row tama-only">
+            <span class="setting-label">Buttons</span>
+            <p class="guide-note">
+              The three buttons on the device, left to right. The
+              <strong>A</strong>, <strong>S</strong> and <strong>D</strong>
+              keys on your keyboard press them too.
+            </p>
+            <table class="button-guide">
+              <thead>
+                <tr>
+                  <th scope="col">On this screen</th>
+                  <th scope="col"><span class="key">A</span></th>
+                  <th scope="col"><span class="key">S</span></th>
+                  <th scope="col"><span class="key">D</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Home</th><td>Highlight the next icon</td><td>Use the highlighted icon</td><td>Clear the highlight</td></tr>
+                <tr><th scope="row">🍚 Feed</th><td>Switch Meal / Snack</td><td>Feed it</td><td>Back</td></tr>
+                <tr><th scope="row">🎮 Game</th><td>Guess it turns left</td><td>Guess it turns right</td><td>Quit the game</td></tr>
+                <tr><th scope="row">📊 Meter</th><td>Next page</td><td>Next page</td><td>Back</td></tr>
+                <tr><th scope="row">Message</th><td>–</td><td>–</td><td>Close</td></tr>
+                <tr><th scope="row">🪦 Pet died</th><td>–</td><td>Start over</td><td>–</td></tr>
+              </tbody>
+            </table>
+            <p class="guide-note">
+              Shortcut: tap an icon on the screen to use it straight away, or
+              tap your pet to make it say hi.
+            </p>
+          </div>
+          <div class="setting-row danger-row tama-only">
             <span class="setting-label">Reset pet</span>
             <button id="btn-reset" class="shell-chip danger">Reset…</button>
           </div>
@@ -186,8 +322,22 @@
       <div id="hud" class="hidden">
         <button id="btn-home" title="Back to title">⌂</button>
         <button id="btn-settings-game" title="Settings">⚙</button>
+        <button id="btn-wardrobe" title="Wardrobe">👕</button>
         <span id="hud-hint">A select · S confirm · D cancel</span>
       </div>
+
+      <!-- Transparent layer under the drawer: a click outside closes the
+           wardrobe without reaching (and pressing) the device. -->
+      <div id="wardrobe-catcher" class="hidden"></div>
+      <aside id="wardrobe" class="hidden" aria-label="Wardrobe">
+        <div class="wardrobe-head">
+          <h2>Wardrobe</h2>
+          <button id="btn-close-wardrobe" title="Close">×</button>
+        </div>
+        <p class="wardrobe-hint">Pick a look — your pet will show it off!</p>
+        <!-- Built from OUTFITS at runtime. -->
+        <div id="wardrobe-grid"></div>
+      </aside>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

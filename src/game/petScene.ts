@@ -1,5 +1,6 @@
 import {
   AmbientLight,
+  Box3,
   CircleGeometry,
   Color,
   ConeGeometry,
@@ -10,15 +11,38 @@ import {
   MeshStandardMaterial,
   Object3D,
   PerspectiveCamera,
+  Raycaster,
   Scene,
   SphereGeometry,
   Vector3,
 } from "three";
-import { CHARACTERS, CharacterId, PROP_ASSET_KEYS } from "../sim/data";
+import { CHARACTERS, CharacterDef, CharacterId, PROP_ASSET_KEYS } from "../sim/data";
 import type { PetSnapshot } from "../sim/pet";
+import type { OutfitId } from "../sim/save";
 import { loadModel, normalizeModel, packItemGlbUrl } from "../assets/registry";
+import { OutfitDef, outfitDef, outfitGlbUrl } from "./outfits";
 
 const CHARACTER_PACK_KEY = "characters";
+
+/** Length of one greeting (hop, two rocks, settle), seconds. */
+const GREET_SECONDS = 1.1;
+/** Parade hold per look — matches the 1 s hard cuts in the reference clip. */
+const PARADE_STEP_SECONDS = 1.0;
+
+/**
+ * Where accessories attach on the current pet, in the pet body's local space.
+ * Measured by raycasting the installed model, so any generated shape works.
+ */
+interface OutfitAnchors {
+  headX: number;
+  headZ: number;
+  headTop: number;
+  headWidth: number;
+  eyeY: number;
+  faceZ: number;
+  neckY: number;
+  neckZ: number;
+}
 
 type PropKind = keyof typeof PROP_ASSET_KEYS;
 
@@ -192,6 +216,119 @@ function buildPlaceholderProp(kind: PropKind): Group {
   return g;
 }
 
+// --------------------------------------------------------------- outfit fit
+
+const raycaster = new Raycaster();
+
+/** First hit of a ray against `target`, or null. */
+function castRay(target: Object3D, origin: Vector3, dir: Vector3) {
+  raycaster.set(origin, dir);
+  const hits = raycaster.intersectObject(target, true);
+  return hits.length ? hits[0].point : null;
+}
+
+/**
+ * Measure where a hat, glasses or bow tie should sit on this model. The model
+ * must be detached (no parent) so its world space equals the pet body's local
+ * space. Every measurement falls back to the bounding box if a ray misses.
+ */
+function measureAnchors(model: Object3D, def: CharacterDef): OutfitAnchors {
+  model.updateMatrixWorld(true);
+  const box = new Box3().setFromObject(model);
+  const size = box.getSize(new Vector3());
+  const height = Math.max(box.max.y, 1e-3);
+  const cz = (box.min.z + box.max.z) / 2;
+  const above = box.max.y + 1;
+  const down = new Vector3(0, -1, 0);
+
+  // Head top: highest surface over a grid spanning the full width AND depth.
+  // Heads are not always centred: the snake's stands behind a tail that coils
+  // toward the viewer, so a single line of probes along z=0 only finds tail.
+  // Probes go centre-out; an off-centre one only wins if clearly higher, so
+  // small bumps like ears don't pull hats sideways.
+  const cx = (box.min.x + box.max.x) / 2;
+  const probes: { x: number; z: number; d: number }[] = [];
+  for (let i = -6; i <= 6; i++) {
+    for (let j = -2; j <= 2; j++) {
+      probes.push({
+        x: cx + (i / 6) * size.x * 0.48,
+        z: cz + (j / 2) * size.z * 0.45,
+        d: Math.abs(i) + Math.abs(j) * 1.5,
+      });
+    }
+  }
+  probes.sort((a, b) => a.d - b.d);
+  let headX = cx;
+  let headZ = cz;
+  let headTop = -Infinity;
+  for (const p of probes) {
+    const hit = castRay(model, new Vector3(p.x, above, p.z), down);
+    if (hit && hit.y > headTop + (p.d === 0 ? 0 : 0.08 * height)) {
+      headTop = hit.y;
+      headX = p.x;
+      headZ = p.z;
+    }
+  }
+  if (!Number.isFinite(headTop)) headTop = box.max.y;
+
+  // Head width: horizontal rays just under the crown, at the head's depth.
+  const wy = headTop - (def.headDrop ?? 0.14) * height;
+  const left = castRay(model, new Vector3(box.min.x - 1, wy, headZ), new Vector3(1, 0, 0));
+  const right = castRay(model, new Vector3(box.max.x + 1, wy, headZ), new Vector3(-1, 0, 0));
+  const headWidth =
+    left && right && right.x - left.x > 0.05 ? right.x - left.x : size.x * 0.7;
+  const midX = left && right ? (left.x + right.x) / 2 : headX;
+
+  const front = new Vector3(0, 0, -1);
+  const eyeY = height * (def.eyeY ?? 0.62);
+  const eyeHit = castRay(model, new Vector3(midX, eyeY, box.max.z + 1), front);
+  const neckY = height * (def.neckY ?? 0.36);
+  const neckHit = castRay(model, new Vector3(midX, neckY, box.max.z + 1), front);
+
+  return {
+    headX: midX,
+    headZ,
+    headTop,
+    headWidth,
+    eyeY,
+    faceZ: eyeHit ? eyeHit.z : box.max.z,
+    neckY,
+    neckZ: neckHit ? neckHit.z : box.max.z,
+  };
+}
+
+/**
+ * Scale an accessory to `width` and place it on the anchors. Head items rest
+ * their base on the crown; face and neck items sit on the front surface.
+ */
+function fitAccessory(obj: Object3D, def: OutfitDef, a: OutfitAnchors) {
+  obj.position.set(0, 0, 0);
+  obj.scale.setScalar(1);
+  obj.updateMatrixWorld(true);
+  const box = new Box3().setFromObject(obj);
+  const size = box.getSize(new Vector3());
+  const scale = size.x > 1e-6 ? (a.headWidth * def.fitWidth) / size.x : 1;
+  obj.scale.setScalar(scale);
+  obj.updateMatrixWorld(true);
+
+  const b = new Box3().setFromObject(obj);
+  const c = b.getCenter(new Vector3());
+  // Normalise so the accessory is centred on x, and z/y per slot below.
+  if (def.slot === "head") {
+    obj.position.set(
+      a.headX - c.x,
+      a.headTop - def.sink * a.headWidth - b.min.y,
+      a.headZ - c.z,
+    );
+  } else {
+    const y = def.slot === "face" ? a.eyeY : a.neckY;
+    const z = def.slot === "face" ? a.faceZ : a.neckZ;
+    // Front of the accessory just proud of the surface; any glasses arms that
+    // reach backwards disappear into the head.
+    obj.position.set(a.headX - c.x, y - c.y, z + 0.015 - b.max.z);
+  }
+}
+
 // ------------------------------------------------------------------ the world
 
 export type PetPose = "idle" | "sleep" | "sulk" | "dead" | "egg";
@@ -205,10 +342,27 @@ export class PetWorld {
   readonly camera: PerspectiveCamera;
 
   private petHolder = new Group(); // moves around the floor
-  private petBody = new Group(); // squash/stretch + model inside
+  private petBody = new Group(); // squash/stretch; holds model + outfit
+  // Outfit is a sibling of the model inside petBody, so it inherits every
+  // hop, squash, sleep roll and turn without separate animation.
+  private modelSlot = new Group();
+  private outfitSlot = new Group();
   private currentCharacter: CharacterId | null = null;
   private currentEggColor: "white" | "pink" = "white";
   private loadToken = 0;
+
+  // outfits
+  private anchors: OutfitAnchors | null = null;
+  private outfitId: OutfitId = "none";
+  private outfitToken = 0;
+  private outfitProtos = new Map<string, Promise<Object3D | null>>();
+  /** Loaded protos, readable synchronously so a parade cut takes one frame. */
+  private resolvedProtos = new Map<string, Object3D | null>();
+
+  // greeting + parade
+  private greetT = -1; // -1 = idle, else seconds into the greeting
+  private greetLoop = false;
+  private parade: { ids: OutfitId[]; index: number; t: number; onStep?: (id: OutfitId) => void } | null = null;
 
   private poopGroup = new Group();
   private foodHolder = new Group();
@@ -247,6 +401,7 @@ export class PetWorld {
     floor.rotation.x = -Math.PI / 2;
     this.scene.add(floor);
 
+    this.petBody.add(this.modelSlot, this.outfitSlot);
     this.petHolder.add(this.petBody);
     this.scene.add(this.petHolder, this.poopGroup, this.foodHolder, this.skullHolder, this.tombstoneHolder);
     this.foodHolder.visible = false;
@@ -280,8 +435,138 @@ export class PetWorld {
   }
 
   private installPetModel(model: Object3D) {
-    this.petBody.clear();
-    this.petBody.add(model);
+    // Measure while detached: its world space then equals petBody-local space.
+    model.removeFromParent();
+    this.anchors = this.currentCharacter
+      ? measureAnchors(model, CHARACTERS[this.currentCharacter])
+      : null;
+    this.modelSlot.clear();
+    this.modelSlot.add(model);
+    // The new body has a different head — refit whatever is being worn.
+    this.applyOutfit(this.outfitId);
+  }
+
+  // ---------------------------------------------------------------- outfits
+
+  /** Wear an outfit (persisted choice). Cancels any running parade. */
+  setOutfit(id: OutfitId) {
+    this.parade = null;
+    this.greetLoop = false;
+    this.outfitId = id;
+    this.applyOutfit(id);
+  }
+
+  /** Load outfit models ahead of time so parade cuts never wait on a download. */
+  preloadOutfits(ids: OutfitId[]): Promise<unknown> {
+    return Promise.all(ids.map((id) => this.outfitProto(id)));
+  }
+
+  /**
+   * The reference clip's effect: hold each look for 1 s, then hard-cut to the
+   * next, while the pet keeps greeting. `onStep` reports the look on screen.
+   */
+  startParade(ids: OutfitId[], onStep?: (id: OutfitId) => void) {
+    if (!ids.length) return;
+    this.parade = { ids, index: 0, t: 0, onStep };
+    this.applyOutfit(ids[0]);
+    onStep?.(ids[0]);
+    this.greetLoop = true;
+    if (this.greetT < 0) this.greetT = 0;
+  }
+
+  /** End the parade and settle on `finalId` (the outfit to keep wearing). */
+  stopParade(finalId: OutfitId) {
+    this.setOutfit(finalId);
+  }
+
+  get isParading() {
+    return this.parade !== null;
+  }
+
+  private outfitProto(id: OutfitId): Promise<Object3D | null> {
+    const def = outfitDef(id);
+    if (!def) return Promise.resolve(null);
+    let p = this.outfitProtos.get(def.id);
+    if (!p) {
+      const url = outfitGlbUrl(def);
+      p = (url ? loadModel(url) : Promise.resolve(null)).then((proto) => {
+        this.resolvedProtos.set(def.id, proto);
+        return proto;
+      });
+      this.outfitProtos.set(def.id, p);
+    }
+    return p;
+  }
+
+  /**
+   * Swap the visible accessory. Synchronous when the model is already loaded
+   * (always true during a parade), so a cut is one frame, as in the clip.
+   */
+  private applyOutfit(id: OutfitId) {
+    const token = ++this.outfitToken;
+    const def = outfitDef(id);
+    if (!def || !this.anchors) {
+      this.outfitSlot.clear();
+      return;
+    }
+    const anchors = this.anchors;
+    const place = (proto: Object3D | null) => {
+      if (token !== this.outfitToken) return; // superseded by a newer swap
+      this.outfitSlot.clear();
+      if (!proto) return;
+      const obj = proto.clone(true);
+      fitAccessory(obj, def, anchors);
+      this.outfitSlot.add(obj);
+    };
+    const ready = this.resolvedProtos.get(def.id);
+    if (ready !== undefined) place(ready);
+    else void this.outfitProto(id).then(place);
+  }
+
+  // --------------------------------------------------------------- greeting
+
+  /**
+   * A procedural hello in place of an arm wave (our pets have no skeleton):
+   * anticipation squash, hop, two rocks leaning toward the viewer, settle.
+   */
+  greet() {
+    this.greetT = 0;
+  }
+
+  /**
+   * Pose the body for greeting time `g` (0..GREET_SECONDS), overriding the
+   * idle hop. Faces the viewer throughout, like the reference's front-on wave.
+   */
+  private applyGreeting(g: number, dtSec: number) {
+    let y = 0;
+    let sy = 1;
+    let rz = 0;
+    let rx = 0;
+    if (g < 0.15) {
+      // Anticipation: squash down before the hop.
+      sy = 1 - 0.14 * Math.sin(((g / 0.15) * Math.PI) / 2);
+    } else if (g < 0.45) {
+      // Hop, stretched at the top.
+      const k = (g - 0.15) / 0.3;
+      y = Math.sin(k * Math.PI) * 0.28;
+      sy = 1 + 0.12 * Math.sin(k * Math.PI);
+    } else if (g < 1.0) {
+      // Two rocks side to side, leaning toward the viewer, fading in and out.
+      const k = (g - 0.45) / 0.55;
+      const env = Math.sin(k * Math.PI);
+      rz = Math.sin(k * Math.PI * 4) * 0.3 * env;
+      rx = 0.12 * env;
+      y = Math.abs(Math.sin(k * Math.PI * 4)) * 0.04 * env;
+    } else {
+      // Settle with a small landing squash.
+      const k = Math.min(1, (g - 1.0) / (GREET_SECONDS - 1.0));
+      sy = 1 - 0.08 * Math.sin(k * Math.PI);
+    }
+    this.petBody.position.y = y;
+    this.petBody.scale.set(2 - sy, sy, 1);
+    this.petBody.rotation.z = rz;
+    this.petBody.rotation.x = rx;
+    this.petHolder.rotation.y *= 1 - Math.min(1, dtSec * 10);
   }
 
   private getProp(kind: PropKind): Object3D {
@@ -380,16 +665,41 @@ export class PetWorld {
     this.time += dtSec;
     const t = this.time;
 
+    // Parade: hard cut to the next look every PARADE_STEP_SECONDS.
+    if (this.parade) {
+      const p = this.parade;
+      p.t += dtSec;
+      while (p.t >= PARADE_STEP_SECONDS) {
+        p.t -= PARADE_STEP_SECONDS;
+        p.index = (p.index + 1) % p.ids.length;
+        const id = p.ids[p.index];
+        this.applyOutfit(id);
+        p.onStep?.(id);
+      }
+    }
+
     if (s.stage === "dead") return;
 
     const isEgg = s.stage === "egg";
     const sleeping = s.asleep;
 
+    // Greeting clock (a sleeping pet never greets).
+    if (sleeping) this.greetT = -1;
+    const greeting = this.greetT >= 0;
+    const g = this.greetT;
+    if (greeting) {
+      this.greetT += dtSec;
+      if (this.greetT >= GREET_SECONDS) this.greetT = this.greetLoop ? 0 : -1;
+    }
+    this.petBody.rotation.x = 0;
+
     // Squash & stretch + hop
     if (isEgg) {
-      // Egg wobble, ramping up as hatch approaches.
+      // Egg wobble, ramping up as hatch approaches. A greeting is a big extra
+      // wobble — an egg has nothing to hop with.
       const urgency = 1 + Math.min(1, (s.totalMin - s.stageStartMin) / 5) * 1.6;
-      this.petBody.rotation.z = Math.sin(t * 7 * urgency) * 0.12 * urgency * 0.6;
+      const hello = greeting ? Math.sin(g * Math.PI * 6) * 0.35 * (1 - g / GREET_SECONDS) : 0;
+      this.petBody.rotation.z = Math.sin(t * 7 * urgency) * 0.12 * urgency * 0.6 + hello;
       this.petBody.position.y = Math.abs(Math.sin(t * 14)) * 0.015 * urgency;
       this.petHolder.position.x *= 0.9;
     } else if (sleeping) {
@@ -424,7 +734,7 @@ export class PetWorld {
         const bite = Math.max(0, 1 - Math.floor(this.feedingT / 0.55) * 0.34);
         this.foodHolder.scale.setScalar(Math.max(0.02, bite));
         this.foodHolder.visible = bite > 0.03;
-      } else if (opts.wander && this.targetTurn === 0) {
+      } else if (opts.wander && this.targetTurn === 0 && !greeting) {
         // Side-shuffle wander, kept clear of the poop corner on the right.
         const target = Math.sin(t * 0.33) * 0.45;
         const dx = target - this.petHolder.position.x;
@@ -432,6 +742,8 @@ export class PetWorld {
         if (Math.abs(dx) > 0.02) this.facing = dx > 0 ? 1 : -1;
         this.petHolder.rotation.y = this.facing * 0.22 * (sulking ? 0.4 : 1);
       }
+
+      if (greeting && this.feedingT < 0) this.applyGreeting(g, dtSec);
     }
 
     // Skull bobs beside the pet, clamped so it never leaves the LCD.

@@ -1,4 +1,5 @@
 import type { Group, Object3D } from "three";
+import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import { Box3, Vector3 } from "three";
 import registry from "../../mint-assets.json";
 import { createMintGltfLoader } from "./gltf-runtime";
@@ -38,6 +39,14 @@ export function assetUrl(key: string, artifactId = "image_file"): string | null 
   return art ? toUrl(art.localPath) : null;
 }
 
+/** First GLB with this role (e.g. "animation_clip") under a registry key. */
+export function assetUrlByRole(key: string, role: string): string | null {
+  const rec = assets[key];
+  if (!rec) return null;
+  const art = Object.values(rec.artifacts).find((a) => a.role === role && a.format === "glb");
+  return art ? toUrl(art.localPath) : null;
+}
+
 /**
  * Find the GLB URL for a labelled item inside a synced asset-pack record.
  * Pack items carry labels like "shell-lightning GLB" or "adult-mame GLB".
@@ -45,16 +54,25 @@ export function assetUrl(key: string, artifactId = "image_file"): string | null 
  * back to procedural placeholders so gameplay is never blocked.
  */
 export function packItemGlbUrl(packKey: string, itemLabel: string): string | null {
+  return packItemUrl(packKey, itemLabel, (art) => art.format === "glb");
+}
+
+function packItemUrl(
+  packKey: string,
+  itemLabel: string,
+  accept: (art: ArtifactRecord) => boolean,
+): string | null {
   const pack = assets[packKey];
   if (!pack) return null;
+  const want = itemLabel.toLowerCase();
   for (const art of Object.values(pack.artifacts)) {
-    if (art.format !== "glb") continue;
-    const label = (art as any).label ?? art.filename ?? art.artifactId;
+    if (!accept(art)) continue;
+    const label = ((art as any).label ?? art.filename ?? art.artifactId).toLowerCase();
     if (
-      label.toLowerCase().startsWith(`${itemLabel.toLowerCase()} `) ||
-      label.toLowerCase() === itemLabel.toLowerCase() ||
-      (art.filename ?? "").toLowerCase().startsWith(`${itemLabel.toLowerCase()}-`) ||
-      art.artifactId.toLowerCase().includes(`:${itemLabel.toLowerCase()}`)
+      label.startsWith(`${want} `) ||
+      label === want ||
+      (art.filename ?? "").toLowerCase().startsWith(`${want}-`) ||
+      art.artifactId.toLowerCase().includes(`:${want}`)
     ) {
       return toUrl(art.localPath);
     }
@@ -83,6 +101,25 @@ export function loadModel(url: string): Promise<Group | null> {
   }
   // Each caller gets its own clone so scenes stay independent.
   return entry.then((scene) => (scene ? (scene.clone(true) as Group) : null));
+}
+
+const gltfCache = new Map<string, Promise<GLTF | null>>();
+
+/**
+ * Load a whole glTF (scene + animations), cached by URL and NOT cloned —
+ * for rigged characters used once, and for animation-only reads. Resolves
+ * null on failure (logged once) so callers can degrade gracefully.
+ */
+export function loadGltf(url: string): Promise<GLTF | null> {
+  let entry = gltfCache.get(url);
+  if (!entry) {
+    entry = gltfLoader.loadAsync(url).catch((err) => {
+      console.warn(`[assets] failed to load ${url}:`, err);
+      return null;
+    });
+    gltfCache.set(url, entry);
+  }
+  return entry;
 }
 
 /** Normalize a model to a target height, resting on y=0, centered on x/z. */

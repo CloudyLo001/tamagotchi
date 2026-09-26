@@ -61,6 +61,11 @@ export interface BackdropTheme {
   fallback: number;
   /** CSS gradient used on the landing page and settings swatch. */
   gradient: string;
+  /**
+   * A solid studio colour with no artwork. The device gets a soft drop shadow
+   * instead of the pastel halo, like a product shot.
+   */
+  plain?: boolean;
 }
 
 export const BACKDROP_THEMES: BackdropTheme[] = [
@@ -83,6 +88,14 @@ export const BACKDROP_THEMES: BackdropTheme[] = [
   {
     id: "bedroom", name: "Bedroom", key: "backdrop-bedroom", fallback: 0xf3e0d2,
     gradient: "linear-gradient(160deg, #fdeee2 0%, #f3d6cf 55%, #d9b9b0 100%)",
+  },
+  {
+    id: "white", name: "White", key: "", fallback: 0xffffff, plain: true,
+    gradient: "linear-gradient(#ffffff, #ffffff)",
+  },
+  {
+    id: "black", name: "Black", key: "", fallback: 0x000000, plain: true,
+    gradient: "linear-gradient(#000000, #000000)",
   },
 ];
 

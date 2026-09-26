@@ -569,6 +569,846 @@
       },
       "thumbnailUrl": "public/assets/mint/characters/preview_image-vd7d0dcraj58ycbcm7n9arqjjx8bztjr-0.webp"
     },
+    "charm-device": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7dgt8n8dbmmc34q2k5gwjdpd8f08mn"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "muse-charm-black-glass-screen-pd8f08mn-optimized.glb",
+          "localPath": "public/assets/mint/charm-device/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 308920,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "muse-charm-black-glass-screen-pd8f08mn-preview.webp",
+          "localPath": "public/assets/mint/charm-device/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 28638
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/charm-device/preview_image.webp"
+    },
+    "muse-mascot": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "animation",
+        "assetType": "model_animation_batch",
+        "assetId": "w57f03kdf1r85j6k7zkfhtt2v98f00y0"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "clip:w9725b34q7jfqjqh2ceh095rkh8f1bdm:animation_glb": {
+          "artifactId": "clip:w9725b34q7jfqjqh2ceh095rkh8f1bdm:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "roll-dodge-kh8f1bdm.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w9725b34q7jfqjqh2ceh095rkh8f1bdm-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2730536,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w973ww80rf081rtvmeg3f3ween8f0v5x:animation_glb": {
+          "artifactId": "clip:w973ww80rf081rtvmeg3f3ween8f0v5x:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "run-fast-3-inplace-en8f0v5x.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w973ww80rf081rtvmeg3f3ween8f0v5x-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2718736,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w974m3ed9dt61cwjv33cpmcfen8f1dpp:animation_glb": {
+          "artifactId": "clip:w974m3ed9dt61cwjv33cpmcfen8f1dpp:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "idle-3-en8f1dpp.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w974m3ed9dt61cwjv33cpmcfen8f1dpp-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2829868,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w975bj4ca2xnt9xnen2edkntvn8f0rbn:animation_glb": {
+          "artifactId": "clip:w975bj4ca2xnt9xnen2edkntvn8f0rbn:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "jumping-jacks-vn8f0rbn.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w975bj4ca2xnt9xnen2edkntvn8f0rbn-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2722444,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w976fd0q06zdf2b3r59wm9d6rh8f14cd:animation_glb": {
+          "artifactId": "clip:w976fd0q06zdf2b3r59wm9d6rh8f14cd:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "idle-rh8f14cd.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w976fd0q06zdf2b3r59wm9d6rh8f14cd-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2758308,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w97cetahj70nast2t9v331e24x8f0a0n:animation_glb": {
+          "artifactId": "clip:w97cetahj70nast2t9v331e24x8f0a0n:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "big-wave-hello-4x8f0a0n.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w97cetahj70nast2t9v331e24x8f0a0n-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2774316,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w97dgy3bteqyah1adc9pa1ywzx8f1hdk:animation_glb": {
+          "artifactId": "clip:w97dgy3bteqyah1adc9pa1ywzx8f1hdk:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "knock-down-zx8f1hdk.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w97dgy3bteqyah1adc9pa1ywzx8f1hdk-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2737912,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w97fs0mfsyejak1s88znvseaws8f01mb:animation_glb": {
+          "artifactId": "clip:w97fs0mfsyejak1s88znvseaws8f01mb:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "dead-ws8f01mb.glb",
+          "localPath": "public/assets/mint/muse-mascot/clip-w97fs0mfsyejak1s88znvseaws8f01mb-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2744444,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "rigged_character_glb": {
+          "artifactId": "rigged_character_glb",
+          "role": "rigged_character",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "beige-fluffy-hooded-mascot-v98f00y0-rigged.glb",
+          "localPath": "public/assets/mint/muse-mascot/rigged_character_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2709364,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        }
+      }
+    },
+    "muse-mascot-extra": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "animation",
+        "assetType": "model_animation_batch",
+        "assetId": "w57f6a9x9kpgar60ny9gr1a70d8f5h9h"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "clip:w977b84q9bsty4apmzv9p2bd358f4e5h:animation_glb": {
+          "artifactId": "clip:w977b84q9bsty4apmzv9p2bd358f4e5h:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "victory-fist-pump-358f4e5h.glb",
+          "localPath": "public/assets/mint/muse-mascot-extra/clip-w977b84q9bsty4apmzv9p2bd358f4e5h-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2727808,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w977h3c71b073gs5z36ycers958f4t9p:animation_glb": {
+          "artifactId": "clip:w977h3c71b073gs5z36ycers958f4t9p:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "big-heart-gesture-958f4t9p.glb",
+          "localPath": "public/assets/mint/muse-mascot-extra/clip-w977h3c71b073gs5z36ycers958f4t9p-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2784160,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w97anpyqs6chn1cveyfy7xrx298f52ez:animation_glb": {
+          "artifactId": "clip:w97anpyqs6chn1cveyfy7xrx298f52ez:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "head-hold-in-pain-298f52ez.glb",
+          "localPath": "public/assets/mint/muse-mascot-extra/clip-w97anpyqs6chn1cveyfy7xrx298f52ez-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2753212,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "clip:w97ffhnqzgkn9e3vcgk1wjvcn98f56bj:animation_glb": {
+          "artifactId": "clip:w97ffhnqzgkn9e3vcgk1wjvcn98f56bj:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "shrug-n98f56bj.glb",
+          "localPath": "public/assets/mint/muse-mascot-extra/clip-w97ffhnqzgkn9e3vcgk1wjvcn98f56bj-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2734116,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        }
+      }
+    },
+    "muse-mascot-getup": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "animation",
+        "assetType": "model_animation_batch",
+        "assetId": "w57bcyxzpa5vq7esx2w0yksw458f0a3h"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "clip:w97efj3b8y53yy84fvz432d2js8f15d9:animation_glb": {
+          "artifactId": "clip:w97efj3b8y53yy84fvz432d2js8f15d9:animation_glb",
+          "role": "animation_clip",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "stand-up1-js8f15d9.glb",
+          "localPath": "public/assets/mint/muse-mascot-getup/clip-w97efj3b8y53yy84fvz432d2js8f15d9-animation_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 2809284,
+          "extensionsUsed": [
+            "KHR_materials_ior",
+            "KHR_materials_specular"
+          ],
+          "extensionsRequired": [],
+          "usesDraco": false,
+          "requiresDraco": false,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        }
+      }
+    },
+    "outfit-bow-tie": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7aczhrnnjwg4wbmf80jfdppx8f09mp"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "bow-tie-px8f09mp-optimized.glb",
+          "localPath": "public/assets/mint/outfit-bow-tie/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 639432,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "bow-tie-px8f09mp-preview.webp",
+          "localPath": "public/assets/mint/outfit-bow-tie/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 31416
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/outfit-bow-tie/preview_image.webp"
+    },
+    "outfit-crown": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7203mzw0mf9ce46w9qkqttbd8f1gef"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "crown-bd8f1gef-optimized.glb",
+          "localPath": "public/assets/mint/outfit-crown/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 642568,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "crown-bd8f1gef-preview.webp",
+          "localPath": "public/assets/mint/outfit-crown/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 30616
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/outfit-crown/preview_image.webp"
+    },
+    "outfit-flower-crown": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7efnfsshh1709eg64yw0q5gx8f0dty"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "flower-crown-gx8f0dty-optimized.glb",
+          "localPath": "public/assets/mint/outfit-flower-crown/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 585144,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "flower-crown-gx8f0dty-preview.webp",
+          "localPath": "public/assets/mint/outfit-flower-crown/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 51962
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/outfit-flower-crown/preview_image.webp"
+    },
+    "outfit-party-hat": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7drmwnxmhj62220st7cr4qws8f0ekv"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "party-hat-ws8f0ekv-optimized.glb",
+          "localPath": "public/assets/mint/outfit-party-hat/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 568144,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "party-hat-ws8f0ekv-preview.webp",
+          "localPath": "public/assets/mint/outfit-party-hat/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 24522
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/outfit-party-hat/preview_image.webp"
+    },
+    "outfit-round-glasses": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7fwpymrk72sv1teez75rp33d8f1856"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "round-glasses-3d8f1856-optimized.glb",
+          "localPath": "public/assets/mint/outfit-round-glasses/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 557276,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "round-glasses-3d8f1856-preview.webp",
+          "localPath": "public/assets/mint/outfit-round-glasses/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 29414
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/outfit-round-glasses/preview_image.webp"
+    },
+    "outfit-wizard-hat": {
+      "source": {
+        "manifestVersion": 1,
+        "kind": "asset",
+        "assetType": "model",
+        "assetId": "ks7e16xkgg68msnfygnbtvkdtn8f054v"
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "mode": "local_files",
+      "artifacts": {
+        "optimized_glb": {
+          "artifactId": "optimized_glb",
+          "role": "canonical_model",
+          "format": "glb",
+          "contentType": "model/gltf-binary",
+          "filename": "purple-star-moon-hat-tn8f054v-optimized.glb",
+          "localPath": "public/assets/mint/outfit-wizard-hat/optimized_glb.glb",
+          "loaderHint": "gltf",
+          "byteSize": 388916,
+          "extensionsUsed": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "extensionsRequired": [
+            "EXT_texture_webp",
+            "KHR_draco_mesh_compression"
+          ],
+          "usesDraco": true,
+          "requiresDraco": true,
+          "usesMeshopt": false,
+          "requiresMeshopt": false,
+          "usesKtx2": false,
+          "requiresKtx2": false,
+          "unknownRequiredExtensions": []
+        },
+        "preview_image": {
+          "artifactId": "preview_image",
+          "role": "preview_image",
+          "format": "webp",
+          "contentType": "image/webp",
+          "filename": "purple-star-moon-hat-tn8f054v-preview.webp",
+          "localPath": "public/assets/mint/outfit-wizard-hat/preview_image.webp",
+          "loaderHint": "image",
+          "byteSize": 29796
+        }
+      },
+      "thumbnailUrl": "public/assets/mint/outfit-wizard-hat/preview_image.webp"
+    },
     "shells": {
       "source": {
         "manifestVersion": 1,

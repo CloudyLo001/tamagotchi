@@ -26,11 +26,13 @@ import { assetUrl } from "./assets/registry";
 import { Beeper } from "./game/audio";
 import { Backdrop } from "./game/backdrop";
 import { BACKDROP_THEMES, SHELL_THEMES, backdropTheme } from "./game/themes";
+import { availableOutfits, outfitThumbUrl } from "./game/outfits";
 import { DeviceShell } from "./game/device";
 import { GameController, InputBinder } from "./game/controller";
 import { ScreenHud } from "./game/hud";
 import { PetWorld } from "./game/petScene";
 import { ScreenRenderer } from "./game/screen";
+import { CharmMode } from "./charm/charmMode";
 
 // ----------------------------------------------------------------- three.js
 
@@ -56,7 +58,7 @@ rim.position.set(-2, 0.6, -1.5);
 scene.add(rim);
 
 const backdrop = new Backdrop();
-scene.add(backdrop.mesh, backdrop.halo);
+scene.add(backdrop.mesh, backdrop.halo, backdrop.shadow);
 
 // Pivot owns all floating/tilt animation; device.group must stay at identity
 // so its internal raycast-based fixture placement remains valid.
@@ -71,6 +73,24 @@ const hud = new ScreenHud();
 const screenRenderer = new ScreenRenderer(hud, 1024);
 const beeper = new Beeper();
 
+// The Muse Charm is a second device that swaps in for the Tamagotchi on the
+// same pivot. It is a toy with no care stats, so the pet stays paused while
+// it is out, just as it does on the title screen.
+const charm = new CharmMode(canvas, camera, renderer, (dx, dy) => applyTilt(dx, dy));
+pivot.add(charm.group);
+charm.world.sfx = {
+  tap: () => beeper.confirm(),
+  soft: () => beeper.blip(),
+  hard: () => beeper.refuse(),
+  dead: () => beeper.lose(),
+  getup: () => beeper.clean(),
+  pet: () => beeper.eat(),
+  hello: () => beeper.hatch(),
+  heart: () => beeper.win(),
+  shrug: () => beeper.cancel(),
+  cheer: () => beeper.win(),
+};
+
 // ------------------------------------------------------------------ settings
 
 let settings: Settings = loadSettings();
@@ -80,6 +100,9 @@ function applySettings() {
   screenRenderer.setLcdEffect(settings.lcd);
   void device.setShell(settings.shell, screenRenderer.mesh);
   backdrop.setTheme(settings.backdrop);
+  document.body.dataset.backdrop = settings.backdrop;
+  // Don't cut a running parade short; it settles on the saved outfit itself.
+  if (!world.isParading) world.setOutfit(settings.outfit);
 
   // The title screen wears the same art as the 3D scene, so the two read as
   // one world. Falls back to the theme's gradient when the image is missing.
@@ -145,6 +168,9 @@ const btnCloseSettings = document.getElementById("btn-close-settings") as HTMLBu
 const btnSettingsGame = document.getElementById("btn-settings-game") as HTMLButtonElement;
 const btnReset = document.getElementById("btn-reset") as HTMLButtonElement;
 const btnHome = document.getElementById("btn-home") as HTMLButtonElement;
+const btnCharm = document.getElementById("btn-charm") as HTMLButtonElement;
+const hudHint = document.getElementById("hud-hint")!;
+const GAME_HINT = hudHint.textContent ?? "";
 
 function refreshContinueButton() {
   const stored = loadPetSave();
@@ -184,10 +210,116 @@ btnContinue.addEventListener("click", () => {
   else refreshContinueButton();
 });
 
+btnCharm.addEventListener("click", () => {
+  beeper.confirm();
+  device.group.visible = false;
+  document.body.classList.add("charm-mode");
+  hudHint.textContent = "Tap · hold · flick · rub · circle";
+  enterGame();
+  void charm.enter();
+});
+
+function exitCharm() {
+  if (!charm.active) return;
+  charm.exit();
+  device.group.visible = true;
+  document.body.classList.remove("charm-mode");
+  hudHint.textContent = GAME_HINT;
+}
+
 btnHome.addEventListener("click", () => {
+  exitCharm();
+  closeWardrobe();
   if (controller) savePet(controller.sim);
   controller = null;
   showLanding();
+});
+
+// ----------------------------------------------------------------- wardrobe
+
+const wardrobeEl = document.getElementById("wardrobe")!;
+const wardrobeCatcher = document.getElementById("wardrobe-catcher")!;
+const wardrobeGrid = document.getElementById("wardrobe-grid")!;
+const btnWardrobe = document.getElementById("btn-wardrobe") as HTMLButtonElement;
+let wardrobeOpen = false;
+
+// "None" first, then every outfit whose model is synced.
+const wardrobeChoices: { id: Settings["outfit"]; name: string; thumb: string | null }[] = [
+  { id: "none", name: "None", thumb: null },
+  ...availableOutfits().map((o) => ({ id: o.id, name: o.name, thumb: outfitThumbUrl(o) })),
+];
+
+for (const choice of wardrobeChoices) {
+  const tile = document.createElement("button");
+  tile.className = "outfit-tile";
+  tile.dataset.outfit = choice.id;
+  const thumb = choice.thumb
+    ? `<img class="outfit-thumb" src="${choice.thumb}" alt="" loading="lazy">`
+    : `<span class="outfit-thumb">∅</span>`;
+  tile.innerHTML = `${thumb}<span>${choice.name}</span>`;
+  tile.addEventListener("click", () => pickOutfit(choice.id));
+  wardrobeGrid.appendChild(tile);
+}
+
+function markTiles(cls: "selected" | "parading", id: string | null) {
+  wardrobeGrid.querySelectorAll<HTMLElement>(".outfit-tile").forEach((t) => {
+    t.classList.toggle(cls, t.dataset.outfit === id);
+  });
+}
+
+async function openWardrobe() {
+  if (wardrobeOpen) return;
+  if (!controller?.canUseWardrobe()) {
+    beeper.refuse();
+    return;
+  }
+  wardrobeOpen = true;
+  controller.setWardrobeOpen(true);
+  wardrobeEl.classList.remove("hidden");
+  wardrobeCatcher.classList.remove("hidden");
+  markTiles("selected", settings.outfit);
+  beeper.blip();
+
+  // The reference clip's effect as a preview: show off every look, one second
+  // each. Models are loaded first so no cut waits on a download.
+  const ids = wardrobeChoices.filter((c) => c.id !== "none").map((c) => c.id);
+  await world.preloadOutfits(ids);
+  if (!wardrobeOpen) return; // closed while loading
+  world.startParade(ids, (id) => markTiles("parading", id));
+}
+
+function pickOutfit(id: Settings["outfit"]) {
+  settings.outfit = id;
+  saveSettings(settings);
+  world.stopParade(id);
+  markTiles("parading", null);
+  markTiles("selected", id);
+  world.greet();
+  beeper.confirm();
+}
+
+/** Close the drawer; if the parade is still running, go back to the saved look. */
+function closeWardrobe() {
+  if (!wardrobeOpen) return;
+  wardrobeOpen = false;
+  if (world.isParading) world.stopParade(settings.outfit);
+  markTiles("parading", null);
+  wardrobeEl.classList.add("hidden");
+  wardrobeCatcher.classList.add("hidden");
+  controller?.setWardrobeOpen(false);
+}
+
+btnWardrobe.addEventListener("click", () => void openWardrobe());
+document.getElementById("btn-close-wardrobe")!.addEventListener("click", () => {
+  beeper.cancel();
+  closeWardrobe();
+});
+// Clicks outside the drawer land on the catcher: close, and never reach the
+// device underneath (so they can't press A/S/D by accident).
+wardrobeCatcher.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  beeper.cancel();
+  closeWardrobe();
 });
 
 // ----------------------------------------------------------------- settings
@@ -264,7 +396,8 @@ btnCloseHowto.addEventListener("click", () => {
 // Escape closes whichever overlay is open.
 window.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
-  if (!howtoEl.classList.contains("hidden")) howtoEl.classList.add("hidden");
+  if (wardrobeOpen) closeWardrobe();
+  else if (!howtoEl.classList.contains("hidden")) howtoEl.classList.add("hidden");
   else if (!settingsEl.classList.contains("hidden")) settingsEl.classList.add("hidden");
 });
 
@@ -335,21 +468,28 @@ btnReset.addEventListener("click", () => {
 let tiltX = 0;
 let tiltY = 0;
 
+function applyTilt(dx: number, dy: number) {
+  tiltY += dx * 0.005;
+  tiltX += dy * 0.004;
+  tiltY = Math.max(-0.55, Math.min(0.55, tiltY));
+  tiltX = Math.max(-0.3, Math.min(0.3, tiltX));
+}
+
 new InputBinder(
   canvas,
   camera,
   device,
   () => screenRenderer.mesh,
   () => controller,
-  {
-    onDrag: (dx, dy) => {
-      tiltY += dx * 0.005;
-      tiltX += dy * 0.004;
-      tiltY = Math.max(-0.55, Math.min(0.55, tiltY));
-      tiltX = Math.max(-0.3, Math.min(0.3, tiltX));
-    },
-  },
+  { onDrag: applyTilt },
 );
+
+// The Charm handles its own pointer input (the binder ignores input while no
+// pet is running). Move/up are on window so a flick can leave the canvas.
+canvas.addEventListener("pointerdown", (e) => charm.pointerDown(e));
+window.addEventListener("pointermove", (e) => charm.pointerMove(e));
+window.addEventListener("pointerup", (e) => charm.pointerUp(e));
+window.addEventListener("pointercancel", (e) => charm.pointerUp(e));
 
 // --------------------------------------------------------------------- loop
 
@@ -378,10 +518,20 @@ function tickAndRender(dtMs: number, nowMs: number) {
   pivot.rotation.y = Math.sin(t * 0.6) * 0.06 + tiltY;
   pivot.rotation.x = tiltX;
   backdrop.update(tiltX, tiltY, t);
+  backdrop.fitShadow(charm.active ? charm.group : device.group, camera);
 
   if (controller) {
     controller.update(dtMs);
+    // Falling asleep, evolving or dying mid-wardrobe ends it.
+    const usable = controller.canUseWardrobe();
+    if (wardrobeOpen && !usable) closeWardrobe();
+    if (btnWardrobe.disabled === usable) btnWardrobe.disabled = !usable;
     screenRenderer.render(renderer, world, hud);
+  }
+  if (charm.active) {
+    // Clamp so a backgrounded tab doesn't teleport the mascot on return.
+    charm.update(Math.min(dtMs, 100) / 1000);
+    charm.render(renderer);
   }
   renderer.render(scene, camera);
 }
@@ -404,6 +554,29 @@ if (import.meta.env.DEV) {
       return controller;
     },
     canvas,
+    world,
+    charm,
+    /**
+     * Close-up of the pet world (no LCD shader), for checking outfit fit.
+     * Uses its own renderer so the main canvas is untouched.
+     */
+    petShot(size = 512): string {
+      const w = window as any;
+      if (!w.__petRenderer) {
+        w.__petRenderer = new WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        w.__petRenderer.outputColorSpace = SRGBColorSpace;
+      }
+      const r: WebGLRenderer = w.__petRenderer;
+      r.setSize(size, size, false);
+      const cam = world.camera.clone();
+      cam.aspect = 1;
+      cam.fov = 26;
+      cam.position.set(0, 0.8, 3.4);
+      cam.lookAt(0, 0.62, 0);
+      cam.updateProjectionMatrix();
+      r.render(world.scene, cam);
+      return r.domElement.toDataURL("image/png");
+    },
   };
 }
 

@@ -27,6 +27,9 @@ export class GameController {
   private mode: Mode = { kind: "idle" };
   private selectedIcon: number | null = null;
   private saveTimer = 0;
+  /** While the wardrobe drawer is open the pet stands still for the parade
+   *  and device input is locked, so outside clicks can't press buttons. */
+  private wardrobeOpen = false;
 
   constructor(
     public sim: PetSim,
@@ -53,6 +56,35 @@ export class GameController {
 
   releaseButton(index: number) {
     this.device.setButtonPressed(index, false);
+  }
+
+  /** Tapping the pet itself on the LCD makes it say hi. */
+  tapPet() {
+    if (!this.canGreet()) return;
+    this.beeper.blip();
+    this.world.greet();
+  }
+
+  private canGreet() {
+    const s = this.sim.s;
+    return s.stage !== "dead" && !s.asleep && this.mode.kind === "idle";
+  }
+
+  /** The wardrobe needs an awake pet with nothing else on screen. */
+  canUseWardrobe() {
+    return this.canGreet();
+  }
+
+  setWardrobeOpen(open: boolean) {
+    this.wardrobeOpen = open;
+    if (open) {
+      this.selectedIcon = null;
+      this.world.centerPet();
+    }
+  }
+
+  get inputLocked() {
+    return this.wardrobeOpen;
   }
 
   clickIcon(index: number) {
@@ -279,7 +311,11 @@ export class GameController {
       }
     } else if (m.kind === "evolving") {
       m.t += dtSec;
-      if (m.t > 2.6) this.toIdle();
+      if (m.t > 2.6) {
+        this.toIdle();
+        // Say hi once the flash clears, so the new form is seen greeting.
+        if (!this.sim.s.asleep) this.world.greet();
+      }
     } else if (m.kind === "message") {
       m.t += dtSec;
       if (m.t > m.duration) this.toIdle();
@@ -292,7 +328,7 @@ export class GameController {
     const chubby =
       stage !== "egg" && stage !== "dead" && this.sim.s.weight >= STAGE_TUNING[stage].chubbyWeight;
     this.world.update(dtSec, this.sim.s, {
-      wander: this.mode.kind === "idle" && !this.sim.s.asleep,
+      wander: this.mode.kind === "idle" && !this.sim.s.asleep && !this.wardrobeOpen,
       chubby,
     });
 
@@ -429,7 +465,7 @@ export class InputBinder {
 
   private onPointerDown = (e: PointerEvent) => {
     const ctrl = this.controller();
-    if (!ctrl) return;
+    if (!ctrl || ctrl.inputLocked) return;
     this.setNdc(e);
     this.raycaster.setFromCamera(this.ndc, this.camera);
 
@@ -450,7 +486,9 @@ export class InputBinder {
         ctrl.clickIcon(icon);
         return;
       }
-      return; // clicking mid-screen does nothing
+      // The middle of the LCD is where the pet lives: tapping it says hi.
+      ctrl.tapPet();
+      return;
     }
 
     // Otherwise: drag to tilt
@@ -478,7 +516,7 @@ export class InputBinder {
 
   private onKeyDown = (e: KeyboardEvent) => {
     const ctrl = this.controller();
-    if (!ctrl) return;
+    if (!ctrl || ctrl.inputLocked) return;
     const map: Record<string, number> = { KeyA: 0, KeyS: 1, KeyD: 2 };
     const idx = map[e.code];
     if (idx === undefined || this.keyDown.has(e.code)) return;
