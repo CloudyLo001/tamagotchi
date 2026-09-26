@@ -8,12 +8,14 @@ import {
   Object3D,
   Raycaster,
   RingGeometry,
+  Texture,
   Vector2,
   Vector3,
 } from "three";
 import { loadModel, normalizeModel, packItemGlbUrl } from "../assets/registry";
 import type { ShellId } from "../sim/save";
 import { ShellTheme, shellTheme } from "./themes";
+import { applyFinish, type FinishId } from "./finishes";
 
 type ShellStyle = ShellTheme;
 
@@ -50,6 +52,8 @@ export class DeviceShell {
   private screenMesh: Mesh | null = null;
   private raycaster = new Raycaster();
   private loadToken = 0;
+  private finish: FinishId = "classic";
+  private env: Texture | null = null;
 
   constructor() {
     this.group.add(this.shellHolder, this.buttonGroup);
@@ -75,8 +79,20 @@ export class DeviceShell {
     }
   }
 
+  /**
+   * Surface finish of the shell (gloss, pearl, glitter...). Applies to the
+   * shell body only, and is re-applied whenever the design changes; classic
+   * restores the shell's own material.
+   */
+  setFinish(finish: FinishId, env: Texture) {
+    this.finish = finish;
+    this.env = env;
+    this.shellHolder.children.forEach((c) => applyFinish(c, finish, env));
+  }
+
   private installShell(shell: Object3D, style: ShellStyle, isFallback: boolean) {
     this.shellHolder.clear();
+    if (this.env) applyFinish(shell, this.finish, this.env);
     this.shellHolder.add(shell);
     this.buildButtons(style);
     this.placeFrontFixtures(isFallback);

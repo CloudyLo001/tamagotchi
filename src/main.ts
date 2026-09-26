@@ -27,6 +27,7 @@ import { Beeper } from "./game/audio";
 import { Backdrop } from "./game/backdrop";
 import { BACKDROP_THEMES, SHELL_THEMES, backdropTheme } from "./game/themes";
 import { availableOutfits, outfitThumbUrl } from "./game/outfits";
+import { FINISHES, studioEnvironment } from "./game/finishes";
 import { DeviceShell } from "./game/device";
 import { GameController, InputBinder } from "./game/controller";
 import { ScreenHud } from "./game/hud";
@@ -98,6 +99,8 @@ let settings: Settings = loadSettings();
 function applySettings() {
   beeper.enabled = settings.sound;
   screenRenderer.setLcdEffect(settings.lcd);
+  device.setFinish(settings.tamaFinish, studioEnvironment(renderer));
+  charm.setFinish(settings.charmFinish);
   void device.setShell(settings.shell, screenRenderer.mesh);
   backdrop.setTheme(settings.backdrop);
   document.body.dataset.backdrop = settings.backdrop;
@@ -359,7 +362,26 @@ for (const t of BACKDROP_THEMES) {
   backdropPicker.appendChild(swatch);
 }
 
+// Surface finishes: one picker per device, each shown in its own mode.
+const tamaFinishPicker = document.getElementById("tama-finish-picker")!;
+const charmFinishPicker = document.getElementById("charm-finish-picker")!;
+for (const f of FINISHES) {
+  const tama = buildSwatch(f.name, f.swatch, () => { settings.tamaFinish = f.id; });
+  tama.dataset.finish = f.id;
+  tamaFinishPicker.appendChild(tama);
+  if (!f.charm) continue;
+  const charmSwatch = buildSwatch(f.name, f.swatch, () => { settings.charmFinish = f.id; });
+  charmSwatch.dataset.finish = f.id;
+  charmFinishPicker.appendChild(charmSwatch);
+}
+
 function syncSettingsUi() {
+  tamaFinishPicker.querySelectorAll<HTMLButtonElement>("[data-finish]").forEach((b) => {
+    b.classList.toggle("selected", b.dataset.finish === settings.tamaFinish);
+  });
+  charmFinishPicker.querySelectorAll<HTMLButtonElement>("[data-finish]").forEach((b) => {
+    b.classList.toggle("selected", b.dataset.finish === settings.charmFinish);
+  });
   shellPicker.querySelectorAll<HTMLButtonElement>("[data-shell]").forEach((b) => {
     b.classList.toggle("selected", b.dataset.shell === settings.shell);
   });

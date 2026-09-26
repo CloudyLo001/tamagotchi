@@ -1,3 +1,4 @@
+import type { FinishId } from "../game/finishes";
 import { CATCHUP_CAP_MINUTES } from "./data";
 import { PetSim, PetSnapshot, SimEvent, newPetSnapshot } from "./pet";
 
@@ -26,6 +27,9 @@ export type OutfitId =
 
 export interface Settings {
   shell: ShellId;
+  /** Surface finish of the Tamagotchi shell and of the Muse Charm body. */
+  tamaFinish: FinishId;
+  charmFinish: FinishId;
   backdrop: BackdropId;
   /** Cosmetic, like the shell: survives new eggs. */
   outfit: OutfitId;
@@ -36,6 +40,8 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   shell: "lightning",
+  tamaFinish: "classic",
+  charmFinish: "classic",
   backdrop: "rainbow",
   outfit: "none",
   eggColor: "white",

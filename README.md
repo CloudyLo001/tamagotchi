@@ -145,6 +145,16 @@ Each clip GLB carries its own copy of the mesh (about 2.7 MB apiece, about
 36 MB in total). They load only when the Charm is opened, and the mascot
 appears as soon as the rig and Idle are in.
 
+**Shell finishes** (Settings → Shell finish / Charm finish) change only how
+the device surface reflects light, keeping each shell's artwork: Classic,
+Glossy (Tamagotchi only; the Charm's classic is already glossy), Matte,
+Pearl, Glitter and Brushed metal. They live in `src/game/finishes.ts` as
+`MeshPhysicalMaterial` recipes over a shared studio reflection map. Glitter
+uses a generated flake normal map under a clear coat and brushed metal a
+streaked roughness map. None is emissive. Reflections are kept weak on the
+Tamagotchi (the bright studio map bleaches its artwork otherwise) and boosted
+on the black Charm.
+
 Shell and scene options are declared in `src/game/themes.ts`. The plain
 **White** and **Black** scenes have no artwork: the device gets a soft drop
 shadow on white and a faint glow on black (a shadow can't show on black), in

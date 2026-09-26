@@ -3,13 +3,13 @@ import {
   Box3,
   BoxGeometry,
   Camera,
+  Color,
   Group,
   LinearFilter,
   Mesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Object3D,
-  PMREMGenerator,
   Raycaster,
   Shape,
   ShapeGeometry,
@@ -21,8 +21,8 @@ import {
   WebGLRenderer,
   type Texture,
 } from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { assetUrl, loadModel, normalizeModel } from "../assets/registry";
+import { applyFinish, type FinishBase, type FinishId, studioEnvironment } from "../game/finishes";
 import { CharmWorld } from "./charmWorld";
 import { GestureRecognizer } from "./gestures";
 
@@ -110,30 +110,39 @@ function glassMaterial(env: Texture) {
   });
 }
 
+/** Plain black: what every finish is painted over on the Charm. */
+const CHARM_BLACK = 0x0a0a0c;
+/** Brushed metal needs some colour to reflect, so it becomes graphite. */
+const CHARM_GRAPHITE = 0x3a3b40;
+
 /**
- * Glossy black body: a plain black lacquer with a clear coat that catches the
- * studio reflections. The model's own colour and normal textures (which read
- * as brushed, hammered metal) are deliberately dropped. New materials, so the
- * cached GLB is never modified.
+ * The Charm's classic body: glossy black lacquer with a soft clear coat. The
+ * model's own colour and normal textures (which read as brushed, hammered
+ * metal) are deliberately dropped.
  */
-function glossify(root: Object3D, env: Texture) {
-  root.traverse((o) => {
-    const mesh = o as Mesh;
-    if (!mesh.isMesh) return;
-    const src = mesh.material as MeshStandardMaterial;
-    mesh.material = new MeshPhysicalMaterial({
-      color: 0x0a0a0c,
-      metalness: 0,
-      roughness: 0.5,
-      // Soft, dimmer reflections: a mirror-sharp coat over the curved rim
-      // reflects the whole studio and reads as chrome, not black plastic.
-      clearcoat: 1,
-      clearcoatRoughness: 0.14,
-      envMap: env,
-      envMapIntensity: 0.5,
-      side: src.side, // the dish is single-surface; keep it double-sided
-    });
+function charmClassic(src: MeshStandardMaterial, env: Texture) {
+  return new MeshPhysicalMaterial({
+    color: CHARM_BLACK,
+    metalness: 0,
+    roughness: 0.5,
+    // Soft, dimmer reflections: a mirror-sharp coat over the curved rim
+    // reflects the whole studio and reads as chrome, not black plastic.
+    clearcoat: 1,
+    clearcoatRoughness: 0.14,
+    envMap: env,
+    envMapIntensity: 0.5,
+    side: src.side, // the dish is single-surface; keep it double-sided
   });
+}
+
+function charmBase(src: MeshStandardMaterial, finish: FinishId): FinishBase {
+  return {
+    map: null,
+    color: new Color(finish === "brushed" ? CHARM_GRAPHITE : CHARM_BLACK),
+    normalMap: null,
+    normalScale: new Vector2(1, 1),
+    side: src.side,
+  };
 }
 
 /**
@@ -147,6 +156,7 @@ export class CharmMode {
   private screen: Mesh;
   private glass: Mesh;
   private env: Texture | null = null;
+  private finish: FinishId = "classic";
   private target = new WebGLRenderTarget(1024, 1024);
   private gestures: GestureRecognizer;
   private raycaster = new Raycaster();
@@ -203,12 +213,38 @@ export class CharmMode {
     this.world.petting(false);
   }
 
-  /** Studio reflections for the metal body and the glass, made once. */
+  /** Surface finish of the Charm's body (classic = glossy black). */
+  setFinish(finish: FinishId) {
+    this.finish = finish;
+    const body = this.shell.children[0];
+    if (body) this.paint(body);
+  }
+
+  private paint(body: Object3D) {
+    const env = this.environment();
+    applyFinish(body, this.finish, env, {
+      classicOf: (src) => charmClassic(src, env),
+      baseOf: charmBase,
+      // Black has no colour to bleach; it needs strong reflections to show.
+      envScale: 4,
+      tweak: (m, finish) => {
+        if (finish !== "pearl") return;
+        // Strong reflections turn a pearl coat on black into chrome. Instead:
+        // softer reflections and a much stronger iridescent film, for a dark
+        // pearly shimmer.
+        m.envMapIntensity = 0.35;
+        m.iridescence = 1;
+        m.iridescenceThicknessRange = [200, 650];
+        m.sheen = 0.35;
+        m.sheenColor.set(0xe9dcff);
+      },
+    });
+  }
+
+  /** Studio reflections for the body and the glass (shared with the Tamagotchi). */
   private environment(): Texture {
     if (!this.env) {
-      const pmrem = new PMREMGenerator(this.renderer);
-      this.env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-      pmrem.dispose();
+      this.env = studioEnvironment(this.renderer);
       this.glass.material = glassMaterial(this.env);
       this.glass.visible = true;
     }
@@ -237,7 +273,7 @@ export class CharmMode {
 
   /** Put the screen on the front surface of whatever shell is installed. */
   private installShell(shell: Object3D) {
-    glossify(shell, this.environment());
+    this.paint(shell);
     this.shell.clear();
     this.shell.add(shell);
     this.shell.updateMatrixWorld(true);
