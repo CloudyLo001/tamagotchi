@@ -19,6 +19,11 @@ export interface ShellTheme {
   buttonColor: number;
   /** Two colours for the settings swatch. */
   swatch: [string, string];
+  /**
+   * Per-button vertical nudge (A, S, D) where this shell's own baked
+   * buttons aren't in a straight row, so ours cover them.
+   */
+  buttonYOffsets?: [number, number, number];
 }
 
 export const SHELL_THEMES: ShellTheme[] = [
@@ -33,6 +38,7 @@ export const SHELL_THEMES: ShellTheme[] = [
   {
     id: "candy", name: "Candy", itemLabel: "shell-candy", packKey: "shells",
     bodyColor: 0xfff6ee, bezelColor: 0xffd23b, buttonColor: 0xffd23b, swatch: ["#fff6ee", "#ff9ec4"],
+    buttonYOffsets: [0, -0.03, 0], // its baked buttons sit in an arc
   },
   {
     id: "ocean", name: "Ocean", itemLabel: "shell-ocean", packKey: "shells2",

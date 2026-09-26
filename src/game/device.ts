@@ -24,12 +24,43 @@ type ShellStyle = ShellTheme;
 const LAYOUT = {
   screenCenter: new Vector2(0, -0.028),
   screenSize: 0.35,
-  buttonY: -0.368,
+  buttonY: -0.362,
   buttonSpacing: 0.132,
-  buttonRadius: 0.064,
-  // Baked shell buttons protrude with faces tilted up-forward; match that.
-  buttonTilt: new Vector3(0, 0.45, 0.9).normalize(),
+  buttonRadius: 0.054,
+  buttonHeight: 0.036,
+  // Nearly upright: a stronger upward tilt leans the top edge back into the
+  // shell's baked button hole and shows it as a dark crescent.
+  buttonTilt: new Vector3(0, 0.2, 0.98).normalize(),
 };
+
+/**
+ * A soft "gumdrop" button: straight sides that roll over a wide rounded edge
+ * into a gently domed top, turned on a lathe around +Y. Same footprint and
+ * height as the old flat cylinder, so placement and pressing are unchanged.
+ */
+function roundedButtonGeometry(radius: number, height: number) {
+  const base = radius * 1.08; // slightly flared foot, as before
+  const fillet = radius * 0.38; // radius of the rounded edge
+  const dome = height * 0.14; // how far the centre bulges above the edge
+  const top = height / 2;
+  const pts: Vector2[] = [new Vector2(0, -top), new Vector2(base, -top)];
+  // side, rising to where the edge starts to roll over
+  pts.push(new Vector2(radius, top - fillet));
+  // quarter-circle fillet from the side round onto the top
+  const cx = radius - fillet;
+  const cy = top - fillet;
+  for (let i = 1; i <= 10; i++) {
+    const a = (i / 10) * (Math.PI / 2);
+    pts.push(new Vector2(cx + fillet * Math.cos(a), cy + fillet * Math.sin(a)));
+  }
+  // gentle dome across the top face
+  for (let i = 1; i <= 8; i++) {
+    const t = i / 8;
+    const x = cx * (1 - t);
+    pts.push(new Vector2(x, top + dome * Math.sin((t * Math.PI) / 2)));
+  }
+  return new LatheGeometry(pts, 40);
+}
 
 export interface DeviceParts {
   /** Where the LCD plane should be attached (position/orientation applied). */
@@ -95,7 +126,7 @@ export class DeviceShell {
     if (this.env) applyFinish(shell, this.finish, this.env);
     this.shellHolder.add(shell);
     this.buildButtons(style);
-    this.placeFrontFixtures(isFallback);
+    this.placeFrontFixtures(isFallback, style);
   }
 
   // -------------------------------------------------------------- fallback
@@ -191,7 +222,7 @@ export class DeviceShell {
     this.buttonNormal.length = 0;
     const mat = new MeshStandardMaterial({ color: style.buttonColor, roughness: 0.35 });
     for (let i = 0; i < 3; i++) {
-      const b = new Mesh(new CylinderGeometry(LAYOUT.buttonRadius, LAYOUT.buttonRadius * 1.08, 0.06, 24), mat);
+      const b = new Mesh(roundedButtonGeometry(LAYOUT.buttonRadius, LAYOUT.buttonHeight), mat);
       b.name = `button-${i}`;
       this.buttonGroup.add(b);
       this.buttons.push(b);
@@ -200,7 +231,7 @@ export class DeviceShell {
     }
   }
 
-  private placeFrontFixtures(isFallback: boolean) {
+  private placeFrontFixtures(isFallback: boolean, style: ShellStyle) {
     // NOTE: assumes this.group itself stays at identity — any floating/tilt
     // animation must be applied to an outer pivot, not to device.group.
     const shell = this.shellHolder;
@@ -220,12 +251,12 @@ export class DeviceShell {
     // Buttons, following the curved surface
     for (let i = 0; i < 3; i++) {
       const x = (i - 1) * LAYOUT.buttonSpacing;
-      const y = LAYOUT.buttonY;
+      const y = LAYOUT.buttonY + (isFallback ? 0 : (style.buttonYOffsets?.[i] ?? 0));
       const hit = this.frontHit(shell, x, y);
       const point = hit?.point ?? new Vector3(x, y, 0.15);
       const normal = LAYOUT.buttonTilt.clone();
       const b = this.buttons[i];
-      b.position.copy(point).addScaledVector(normal, 0.01);
+      b.position.copy(point).addScaledVector(normal, 0.013);
       b.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), normal);
       this.buttonRest[i].copy(b.position);
       this.buttonNormal[i].copy(normal);
@@ -237,7 +268,7 @@ export class DeviceShell {
     const b = this.buttons[index];
     if (!b) return;
     b.position.copy(this.buttonRest[index]);
-    if (pressed) b.position.addScaledVector(this.buttonNormal[index], -0.014);
+    if (pressed) b.position.addScaledVector(this.buttonNormal[index], -0.011);
   }
 
   /** Which button (if any) does this main-scene raycast hit? */
